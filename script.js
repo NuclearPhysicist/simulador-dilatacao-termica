@@ -15,8 +15,14 @@ botaoCalcular.addEventListener("click", function () {
     document.getElementById("temperaturaFinal").value
   );
 
-  // Coeficiente provisório de dilatação do alumínio
-  const alpha = 23e-6;
+  // Material selecionado
+  const codigoMaterial =
+    document.getElementById("material").value;
+
+  const material = materiais[codigoMaterial];
+
+  // Coeficiente do material selecionado
+  const alpha = material.alpha;
 
   // Variação de temperatura
   const deltaT = Tf - T0;
@@ -27,9 +33,11 @@ botaoCalcular.addEventListener("click", function () {
   // Comprimento final
   const Lf = L0 + deltaL;
 
-  // Exibir os resultados na tela
+  // Exibir os resultados
   mensagem.innerHTML = `
     <strong>Resultado da simulação</strong><br><br>
+
+    Material: ${material.nome}<br>
 
     Comprimento inicial:
     ${L0.toFixed(6)} m<br>
