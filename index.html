@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Simulador de Dilatação Térmica</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="container">
+    <h1>Simulador de Dilatação Térmica</h1>
+
+    <p>
+      Estude como a temperatura modifica as dimensões de um material.
+    </p>
+
+    <section class="simulador">
+      <h2>Configuração da simulação</h2>
+
+      <label for="material">Material</label>
+
+      <select id="material">
+        <option value="Al">Alumínio</option>
+      </select>
+
+      <label for="comprimentoInicial">
+        Comprimento inicial (m)
+      </label>
+
+      <input
+        type="number"
+        id="comprimentoInicial"
+        value="1"
+        min="0"
+        step="0.01"
+      >
+
+      <label for="temperaturaInicial">
+        Temperatura inicial (°C)
+      </label>
+
+      <input
+        type="number"
+        id="temperaturaInicial"
+        value="20"
+        step="1"
+      >
+
+      <label for="temperaturaFinal">
+        Temperatura final (°C)
+      </label>
+
+      <input
+        type="number"
+        id="temperaturaFinal"
+        value="100"
+        step="1"
+      >
+
+      <button id="calcular">
+        Calcular
+      </button>
+    </section>
+
+    <section class="resultado">
+      <h2>Resultado</h2>
+
+      <p id="mensagem">
+        Configure os valores e clique em Calcular.
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
