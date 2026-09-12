@@ -158,80 +158,108 @@ function calcularBeta(T, material) {
   return beta;
 }
 
-// ------------------------------------------------------------
-// 4. TESTE
-// ------------------------------------------------------------
-//
-// Vamos testar o alumínio da Tabela 2.
-//
-// Para o Al:
-// theta = 367 K
-// ------------------------------------------------------------
+// ============================================================
+// TESTE COMPLETO DO MODELO
+// ============================================================
 
 const aluminio = materiais.Al;
-
 const temperaturaTeste = 300;
+
+// ------------------------------------------------------------
+// Equação (3)
+// ------------------------------------------------------------
 
 const CvAl = calcularCv(
   temperaturaTeste,
   aluminio.theta
 );
 
-console.log("=================================");
-console.log("TESTE DA EQUAÇÃO (3)");
-console.log("=================================");
+// ------------------------------------------------------------
+// Equação (4)
+// ------------------------------------------------------------
 
-console.log("Material:", aluminio.nome);
-
-console.log("Temperatura:", temperaturaTeste, "K");
-
-console.log("Theta:", aluminio.theta, "K");
-
-console.log(
-  "Cv =",
-  CvAl.toFixed(6),
-  "J/(mol·K)"
+const UAl = calcularU(
+  temperaturaTeste,
+  aluminio.theta
 );
 
-// ============================================
-// TESTE DA EQUAÇÃO (4)
-// ============================================
-
-const UAl = calcularU(300, aluminio.theta);
-
-console.log("=================================");
-console.log("TESTE DA EQUAÇÃO (4)");
-console.log("=================================");
-console.log("Material:", aluminio.nome);
-console.log("Temperatura:", 300, "K");
-console.log("Theta:", aluminio.theta, "K");
-console.log("U =", UAl.toFixed(6), "J/mol");
-
-// ============================================================
-// TESTE DA EQUAÇÃO (2)
-// ============================================================
+// ------------------------------------------------------------
+// Equação (2)
+// ------------------------------------------------------------
 
 const betaAl = calcularBeta(
   temperaturaTeste,
   aluminio
 );
 
-console.log("=================================");
-console.log("TESTE DA EQUAÇÃO (2)");
-console.log("=================================");
+// ------------------------------------------------------------
+// Relação beta -> alpha linear
+// ------------------------------------------------------------
+
+const alphaAl = calcularAlphaLinear(
+  temperaturaTeste,
+  aluminio
+);
+
+
+
+
+
+
+// ============================================================
+// RESULTADOS
+// ============================================================
+
+console.log("");
+console.log("==================================================");
+console.log("   VALIDAÇÃO DO MODELO — ALUMÍNIO");
+console.log("==================================================");
+
 console.log("Material:", aluminio.nome);
 console.log("Temperatura:", temperaturaTeste, "K");
 console.log("Theta:", aluminio.theta, "K");
-console.log("k:", aluminio.k);
-console.log("Q0:", aluminio.Q0, "kJ/mol");
+
+console.log("");
+console.log("Equação (3) — Calor específico:");
 console.log(
-  "Q0:",
-  (aluminio.Q0 * 1000).toFixed(3),
+  "Cv =",
+  CvAl.toFixed(9),
+  "J/(mol·K)"
+);
+
+console.log("");
+console.log("Equação (4) — Energia interna:");
+console.log(
+  "U =",
+  UAl.toFixed(9),
   "J/mol"
 );
+
+console.log("");
+console.log("Equação (2) — Expansão volumétrica:");
 console.log(
   "Beta =",
   betaAl.toExponential(9),
   "1/K"
 );
-console.log("=================================");
+
+console.log("");
+console.log("Relação isotrópica:");
+console.log(
+  "Alpha linear = Beta / 3"
+);
+
+console.log(
+  "Alpha =",
+  alphaAl.toExponential(9),
+  "1/K"
+);
+
+console.log(
+  "Alpha =",
+  (alphaAl * 1e6).toFixed(6),
+  "×10^-6 1/K"
+);
+
+console.log("");
+console.log("==================================================");
