@@ -156,7 +156,7 @@ function calcularBeta(T, material) {
   const razao = U / Q0;
 
   const denominador =
-    Q0 * (1 + k * Math.pow(razao, 2));
+     Q0 * (1 - k * Math.pow(razao, 2));
 
   // Equação (2)
   const beta = Cv / denominador;
