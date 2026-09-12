@@ -118,6 +118,52 @@ function calcularU(T, theta) {
   return integral;
 }
 
+// ============================================================
+// EQUAÇÃO (2) — Coeficiente de expansão volumétrica beta(T)
+// ============================================================
+//
+// beta(T) = Cv(T) / [ Q0 * (1 + k * (U(T)/Q0)^2) ]
+//
+// Cv -> J/(mol·K)
+// U  -> J/mol
+// Q0 -> J/mol
+//
+// Resultado:
+// beta -> 1/K
+// ============================================================
+
+function calcularBeta(T, material) {
+
+  if (T <= 0) {
+    return 0;
+  }
+
+  // Parâmetros do material
+  const k = material.k;
+
+  // Q0 está armazenado em kJ/mol na Tabela 2.
+  // Converter para J/mol para manter consistência
+  // com Cv e U.
+  const Q0 = material.Q0 * 1000;
+
+  // Equação (3)
+  const Cv = calcularCv(T, material.theta);
+
+  // Equação (4)
+  const U = calcularU(T, material.theta);
+
+  // Termo da Equação (2)
+  const razao = U / Q0;
+
+  const denominador =
+    Q0 * (1 + k * Math.pow(razao, 2));
+
+  // Equação (2)
+  const beta = Cv / denominador;
+
+  return beta;
+}
+
 // ------------------------------------------------------------
 // 4. TESTE
 // ------------------------------------------------------------
@@ -166,4 +212,32 @@ console.log("Material:", aluminio.nome);
 console.log("Temperatura:", 300, "K");
 console.log("Theta:", aluminio.theta, "K");
 console.log("U =", UAl.toFixed(6), "J/mol");
+
+// ============================================================
+// TESTE DA EQUAÇÃO (2)
+// ============================================================
+
+const betaAl = calcularBeta(
+  temperaturaTeste,
+  aluminio
+);
+
+console.log("=================================");
+console.log("TESTE DA EQUAÇÃO (2)");
+console.log("=================================");
+console.log("Material:", aluminio.nome);
+console.log("Temperatura:", temperaturaTeste, "K");
+console.log("Theta:", aluminio.theta, "K");
+console.log("k:", aluminio.k);
+console.log("Q0:", aluminio.Q0, "kJ/mol");
+console.log(
+  "Q0:",
+  (aluminio.Q0 * 1000).toFixed(3),
+  "J/mol"
+);
+console.log(
+  "Beta =",
+  betaAl.toExponential(9),
+  "1/K"
+);
 console.log("=================================");
