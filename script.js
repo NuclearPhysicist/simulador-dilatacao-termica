@@ -167,5 +167,3 @@ console.log("Temperatura:", 300, "K");
 console.log("Theta:", aluminio.theta, "K");
 console.log("U =", UAl.toFixed(6), "J/mol");
 console.log("=================================");
-
-console.log("=================================");
