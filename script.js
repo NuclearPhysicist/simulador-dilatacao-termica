@@ -89,6 +89,34 @@ function calcularCv(T, theta) {
   return Cv;
 }
 
+// ============================================
+// EQUAÇÃO (4) — Energia interna U(T)
+// U(T) = integral de 0 até T de Cv(T) dT
+// ============================================
+
+function calcularU(T, theta) {
+
+  if (T <= 0) return 0;
+
+  const numeroPassos = 1000;
+  const passo = T / numeroPassos;
+
+  let integral = 0;
+
+  for (let i = 0; i < numeroPassos; i++) {
+
+    const T1 = i * passo;
+    const T2 = (i + 1) * passo;
+
+    const Cv1 = calcularCv(T1, theta);
+    const Cv2 = calcularCv(T2, theta);
+
+    // Regra do trapézio
+    integral += ((Cv1 + Cv2) / 2) * passo;
+  }
+
+  return integral;
+}
 
 // ------------------------------------------------------------
 // 4. TESTE
@@ -124,5 +152,20 @@ console.log(
   CvAl.toFixed(6),
   "J/(mol·K)"
 );
+
+// ============================================
+// TESTE DA EQUAÇÃO (4)
+// ============================================
+
+const UAl = calcularU(300, aluminio.theta);
+
+console.log("=================================");
+console.log("TESTE DA EQUAÇÃO (4)");
+console.log("=================================");
+console.log("Material:", aluminio.nome);
+console.log("Temperatura:", 300, "K");
+console.log("Theta:", aluminio.theta, "K");
+console.log("U =", UAl.toFixed(6), "J/mol");
+console.log("=================================");
 
 console.log("=================================");
