@@ -1,54 +1,128 @@
-const botaoCalcular = document.getElementById("calcular");
-const mensagem = document.getElementById("mensagem");
+// ============================================================
+// SIMULADOR DE DILATAÇÃO TÉRMICA
+// Modelo de Zhang, Li e Li (2013)
+// Etapa 1 — Equação (3): calor específico a volume constante
+// ============================================================
 
-botaoCalcular.addEventListener("click", function () {
-  // Ler os valores informados pelo usuário
-  const L0 = Number(
-    document.getElementById("comprimentoInicial").value
-  );
 
-  const T0 = Number(
-    document.getElementById("temperaturaInicial").value
-  );
+// ------------------------------------------------------------
+// 1. Constante universal dos gases
+// ------------------------------------------------------------
 
-  const Tf = Number(
-    document.getElementById("temperaturaFinal").value
-  );
+const R = 8.314462618; // J/(mol·K)
 
-  // Material selecionado
-  const codigoMaterial =
-    document.getElementById("material").value;
 
-  const material = materiais[codigoMaterial];
+// ------------------------------------------------------------
+// 2. Função de Debye
+// ------------------------------------------------------------
+//
+// Calcula:
+//
+// D3(x) = (3/x³) ∫[0,x] y³/(e^y - 1) dy
+//
+// Esta função será utilizada na Equação (3).
+// ------------------------------------------------------------
 
-  // Coeficiente do material selecionado
-  const alpha = material.alpha;
+function funcaoDebye(x) {
 
-  // Variação de temperatura
-  const deltaT = Tf - T0;
+  // Para temperaturas muito altas,
+  // x = Theta/T fica próximo de zero.
+  if (x < 1e-6) {
+    return 1;
+  }
 
-  // Dilatação linear
-  const deltaL = L0 * alpha * deltaT;
+  const numeroPassos = 1000;
+  const passo = x / numeroPassos;
 
-  // Comprimento final
-  const Lf = L0 + deltaL;
+  let integral = 0;
 
-  // Exibir os resultados
-  mensagem.innerHTML = `
-    <strong>Resultado da simulação</strong><br><br>
+  for (let i = 0; i < numeroPassos; i++) {
 
-    Material: ${material.nome}<br>
+    const y = (i + 0.5) * passo;
 
-    Comprimento inicial:
-    ${L0.toFixed(6)} m<br>
+    let termo;
 
-    Variação de temperatura:
-    ${deltaT.toFixed(2)} °C<br>
+    if (y < 1e-6) {
+      termo = y * y;
+    } else {
+      termo = Math.pow(y, 3) / Math.expm1(y);
+    }
 
-    Dilatação:
-    ${deltaL.toFixed(6)} m<br>
+    integral += termo * passo;
+  }
 
-    Comprimento final:
-    ${Lf.toFixed(6)} m
-  `;
-});
+  return (3 / Math.pow(x, 3)) * integral;
+}
+
+
+// ------------------------------------------------------------
+// 3. Equação (3) — C_V(T)
+// ------------------------------------------------------------
+//
+// C_V(T) = 3R [
+//              4 D3(Theta/T)
+//              - 3(Theta/T)/(e^(Theta/T)-1)
+//            ]
+//
+// Theta = temperatura de Debye média do material.
+//
+// Resultado em J/(mol·K).
+// ------------------------------------------------------------
+
+function calcularCv(T, theta) {
+
+  if (T <= 0) {
+    return 0;
+  }
+
+  const x = theta / T;
+
+  const D3 = funcaoDebye(x);
+
+  const segundoTermo =
+    (3 * x) / Math.expm1(x);
+
+  const Cv =
+    3 * R *
+    (4 * D3 - segundoTermo);
+
+  return Cv;
+}
+
+
+// ------------------------------------------------------------
+// 4. TESTE
+// ------------------------------------------------------------
+//
+// Vamos testar o alumínio da Tabela 2.
+//
+// Para o Al:
+// theta = 367 K
+// ------------------------------------------------------------
+
+const aluminio = materiais.Al;
+
+const temperaturaTeste = 300;
+
+const CvAl = calcularCv(
+  temperaturaTeste,
+  aluminio.theta
+);
+
+console.log("=================================");
+console.log("TESTE DA EQUAÇÃO (3)");
+console.log("=================================");
+
+console.log("Material:", aluminio.nome);
+
+console.log("Temperatura:", temperaturaTeste, "K");
+
+console.log("Theta:", aluminio.theta, "K");
+
+console.log(
+  "Cv =",
+  CvAl.toFixed(6),
+  "J/(mol·K)"
+);
+
+console.log("=================================");
