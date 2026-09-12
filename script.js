@@ -158,6 +158,40 @@ function calcularBeta(T, material) {
   return beta;
 }
 
+
+
+// ============================================================
+// COEFICIENTE DE EXPANSÃO LINEAR alpha(T)
+// ============================================================
+//
+// Para um sólido isotrópico:
+//
+// beta(T) = 3 * alpha(T)
+//
+// Portanto:
+//
+// alpha(T) = beta(T) / 3
+//
+// Resultado:
+// alpha -> 1/K
+// ============================================================
+
+function calcularAlphaLinear(T, material) {
+
+  if (T <= 0) {
+    return 0;
+  }
+
+  const beta = calcularBeta(T, material);
+
+  const alpha = beta / 3;
+
+  return alpha;
+}
+
+
+
+
 // ============================================================
 // TESTE COMPLETO DO MODELO
 // ============================================================
@@ -200,11 +234,6 @@ const alphaAl = calcularAlphaLinear(
   temperaturaTeste,
   aluminio
 );
-
-
-
-
-
 
 // ============================================================
 // RESULTADOS
