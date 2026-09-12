@@ -138,27 +138,21 @@ function calcularBeta(T, material) {
     return 0;
   }
 
-  // Parâmetros do material
   const k = material.k;
 
-  // Q0 está armazenado em kJ/mol na Tabela 2.
-  // Converter para J/mol para manter consistência
-  // com Cv e U.
+  // Q0 está em kJ/mol.
+  // Converter para J/mol.
   const Q0 = material.Q0 * 1000;
 
-  // Equação (3)
   const Cv = calcularCv(T, material.theta);
 
-  // Equação (4)
   const U = calcularU(T, material.theta);
 
-  // Termo da Equação (2)
   const razao = U / Q0;
 
   const denominador =
-     Q0 * (1 - k * Math.pow(razao, 2));
+    Q0 * (1 - k * Math.pow(razao, 2));
 
-  // Equação (2)
   const beta = Cv / denominador;
 
   return beta;
