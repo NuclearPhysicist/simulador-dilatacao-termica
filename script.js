@@ -1,7 +1,34 @@
 // ============================================================
 // SIMULADOR DE DILATAÇÃO TÉRMICA
-// TESTE DA VERSÃO BÁSICA
 // ============================================================
+
+// ============================================================
+// PREENCHE O MENU DE MATERIAIS AUTOMATICAMENTE
+// ============================================================
+
+function carregarMateriais() {
+
+    const seletor = document.getElementById("material");
+
+    // Limpa opções existentes
+    seletor.innerHTML = "";
+
+    // Percorre todos os materiais cadastrados
+    Object.keys(materiais).forEach((codigo) => {
+
+        const material = materiais[codigo];
+
+        const opcao = document.createElement("option");
+
+        opcao.value = codigo;
+
+        opcao.textContent = material.nome;
+
+        seletor.appendChild(opcao);
+
+    });
+
+}
 
 function calcular() {
 
