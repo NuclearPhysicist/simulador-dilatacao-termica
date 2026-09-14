@@ -1,294 +1,225 @@
 // ============================================================
 // SIMULADOR DE DILATAÇÃO TÉRMICA
-// Modelo de Zhang, Li e Li (2013)
-// Etapa 1 — Equação (3): calor específico a volume constante
+// ============================================================
+//
+// Modelo:
+// ΔL = L₀ · α · ΔT
+//
+// Lf = L₀ + ΔL
+//
+// α = coeficiente de expansão linear médio
 // ============================================================
 
 
-// ------------------------------------------------------------
-// 1. Constante universal dos gases
-// ------------------------------------------------------------
+// ============================================================
+// FUNÇÃO PRINCIPAL
+// ============================================================
 
-const R = 8.314462618; // J/(mol·K)
+function calcular() {
+
+    // --------------------------------------------------------
+    // 1. OBTÉM O MATERIAL SELECIONADO
+    // --------------------------------------------------------
+
+    const materialSelecionado =
+        document.getElementById("material").value;
+
+    const material = materiais[materialSelecionado];
 
 
-// ------------------------------------------------------------
-// 2. Função de Debye
-// ------------------------------------------------------------
-//
-// Calcula:
-//
-// D3(x) = (3/x³) ∫[0,x] y³/(e^y - 1) dy
-//
-// Esta função será utilizada na Equação (3).
-// ------------------------------------------------------------
+    // --------------------------------------------------------
+    // 2. OBTÉM OS DADOS INFORMADOS PELO USUÁRIO
+    // --------------------------------------------------------
 
-function funcaoDebye(x) {
+    const L0 =
+        parseFloat(document.getElementById("comprimento").value);
 
-  // Para temperaturas muito altas,
-  // x = Theta/T fica próximo de zero.
-  if (x < 1e-6) {
-    return 1;
-  }
+    const Ti =
+        parseFloat(document.getElementById("temperaturaInicial").value);
 
-  const numeroPassos = 1000;
-  const passo = x / numeroPassos;
+    const Tf =
+        parseFloat(document.getElementById("temperaturaFinal").value);
 
-  let integral = 0;
 
-  for (let i = 0; i < numeroPassos; i++) {
+    // --------------------------------------------------------
+    // 3. VERIFICA SE OS DADOS SÃO VÁLIDOS
+    // --------------------------------------------------------
 
-    const y = (i + 0.5) * passo;
+    if (!material) {
 
-    let termo;
+        mostrarResultado(`
+            <div class="aviso">
+                <strong>Erro:</strong>
+                selecione um material.
+            </div>
+        `);
 
-    if (y < 1e-6) {
-      termo = y * y;
-    } else {
-      termo = Math.pow(y, 3) / Math.expm1(y);
+        return;
     }
 
-    integral += termo * passo;
-  }
 
-  return (3 / Math.pow(x, 3)) * integral;
+    if (isNaN(L0) || L0 <= 0) {
+
+        mostrarResultado(`
+            <div class="aviso">
+                <strong>Erro:</strong>
+                informe um comprimento inicial válido.
+            </div>
+        `);
+
+        return;
+    }
+
+
+    if (isNaN(Ti) || isNaN(Tf)) {
+
+        mostrarResultado(`
+            <div class="aviso">
+                <strong>Erro:</strong>
+                informe as temperaturas inicial e final.
+            </div>
+        `);
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // 4. VERIFICA A FAIXA DE TEMPERATURA DOS DADOS
+    // --------------------------------------------------------
+
+    const Tmenor = Math.min(Ti, Tf);
+    const Tmaior = Math.max(Ti, Tf);
+
+    let avisoFaixa = "";
+
+
+    if (Tmenor < material.Tmin || Tmaior > material.Tmax) {
+
+        avisoFaixa = `
+            <div class="aviso">
+                <strong>⚠ Atenção: extrapolação dos dados</strong>
+
+                <p>
+                    Para o material
+                    <strong>${material.nome}</strong>,
+                    a faixa de temperatura indicada na tabela é:
+                    <strong>${material.Tmin} °C a ${material.Tmax} °C</strong>.
+                </p>
+
+                <p>
+                    O intervalo informado foi:
+                    <strong>${Ti} °C → ${Tf} °C</strong>.
+                </p>
+
+                <p>
+                    Portanto, este cálculo representa uma
+                    <strong>extrapolação</strong> da faixa indicada
+                    para o coeficiente de expansão.
+                </p>
+            </div>
+        `;
+    }
+
+
+    // --------------------------------------------------------
+    // 5. CALCULA A VARIAÇÃO DE TEMPERATURA
+    // --------------------------------------------------------
+
+    const deltaT = Tf - Ti;
+
+
+    // --------------------------------------------------------
+    // 6. CALCULA A VARIAÇÃO DE COMPRIMENTO
+    // --------------------------------------------------------
+
+    const deltaL =
+        L0 * material.alpha * deltaT;
+
+
+    // --------------------------------------------------------
+    // 7. CALCULA O COMPRIMENTO FINAL
+    // --------------------------------------------------------
+
+    const Lf = L0 + deltaL;
+
+
+    // --------------------------------------------------------
+    // 8. MOSTRA OS RESULTADOS
+    // --------------------------------------------------------
+
+    mostrarResultado(`
+
+        ${avisoFaixa}
+
+        <div class="resultado-calculo">
+
+            <h3>Resultado</h3>
+
+            <p>
+                <strong>Material:</strong>
+                ${material.nome}
+            </p>
+
+            <p>
+                <strong>Coeficiente de expansão linear:</strong>
+                ${formatarAlpha(material.alpha)}
+                K⁻¹
+            </p>
+
+            <p>
+                <strong>Temperatura inicial:</strong>
+                ${Ti.toFixed(2)} °C
+            </p>
+
+            <p>
+                <strong>Temperatura final:</strong>
+                ${Tf.toFixed(2)} °C
+            </p>
+
+            <p>
+                <strong>Variação de temperatura:</strong>
+                ${deltaT.toFixed(2)} °C
+            </p>
+
+            <hr>
+
+            <p>
+                <strong>Comprimento inicial:</strong>
+                ${L0.toFixed(6)} m
+            </p>
+
+            <p>
+                <strong>Variação de comprimento:</strong>
+                ${deltaL.toFixed(6)} m
+            </p>
+
+            <p>
+                <strong>Comprimento final:</strong>
+                ${Lf.toFixed(6)} m
+            </p>
+
+        </div>
+
+    `);
 }
 
 
-// ------------------------------------------------------------
-// 3. Equação (3) — C_V(T)
-// ------------------------------------------------------------
-//
-// C_V(T) = 3R [
-//              4 D3(Theta/T)
-//              - 3(Theta/T)/(e^(Theta/T)-1)
-//            ]
-//
-// Theta = temperatura de Debye média do material.
-//
-// Resultado em J/(mol·K).
-// ------------------------------------------------------------
-
-function calcularCv(T, theta) {
-
-  if (T <= 0) {
-    return 0;
-  }
-
-  const x = theta / T;
-
-  const D3 = funcaoDebye(x);
-
-  const segundoTermo =
-    (3 * x) / Math.expm1(x);
-
-  const Cv =
-    3 * R *
-    (4 * D3 - segundoTermo);
-
-  return Cv;
-}
-
-// ============================================
-// EQUAÇÃO (4) — Energia interna U(T)
-// U(T) = integral de 0 até T de Cv(T) dT
-// ============================================
-
-function calcularU(T, theta) {
-
-  if (T <= 0) return 0;
-
-  const numeroPassos = 1000;
-  const passo = T / numeroPassos;
-
-  let integral = 0;
-
-  for (let i = 0; i < numeroPassos; i++) {
-
-    const T1 = i * passo;
-    const T2 = (i + 1) * passo;
-
-    const Cv1 = calcularCv(T1, theta);
-    const Cv2 = calcularCv(T2, theta);
-
-    // Regra do trapézio
-    integral += ((Cv1 + Cv2) / 2) * passo;
-  }
-
-  return integral;
-}
-
 // ============================================================
-// EQUAÇÃO (2) — Coeficiente de expansão volumétrica beta(T)
-// ============================================================
-//
-// beta(T) = Cv(T) / [ Q0 * (1 + k * (U(T)/Q0)^2) ]
-//
-// Cv -> J/(mol·K)
-// U  -> J/mol
-// Q0 -> J/mol
-//
-// Resultado:
-// beta -> 1/K
+// FUNÇÃO PARA MOSTRAR O RESULTADO
 // ============================================================
 
-function calcularBeta(T, material) {
+function mostrarResultado(conteudo) {
 
-  if (T <= 0) {
-    return 0;
-  }
-
-  const k = material.k;
-
-  // Q0 está em kJ/mol.
-  // Converter para J/mol.
-  const Q0 = material.Q0 * 1000;
-
-  const Cv = calcularCv(T, material.theta);
-
-  const U = calcularU(T, material.theta);
-
-  const razao = U / Q0;
-
-  const denominador =
-    Q0 * (1 - k * Math.pow(razao, 2));
-
-  const beta = Cv / denominador;
-
-  return beta;
+    document.getElementById("resultado").innerHTML = conteudo;
 }
 
 
-
 // ============================================================
-// COEFICIENTE DE EXPANSÃO LINEAR alpha(T)
-// ============================================================
-//
-// Para um sólido isotrópico:
-//
-// beta(T) = 3 * alpha(T)
-//
-// Portanto:
-//
-// alpha(T) = beta(T) / 3
-//
-// Resultado:
-// alpha -> 1/K
+// FORMATAÇÃO DO COEFICIENTE α
 // ============================================================
 
-function calcularAlphaLinear(T, material) {
+function formatarAlpha(alpha) {
 
-  if (T <= 0) {
-    return 0;
-  }
-
-  const beta = calcularBeta(T, material);
-
-  const alpha = beta / 3;
-
-  return alpha;
+    return (alpha * 1e6).toFixed(2) + " × 10⁻⁶";
 }
-
-
-
-
-// ============================================================
-// TESTE COMPLETO DO MODELO
-// ============================================================
-
-const aluminio = materiais.Al;
-const temperaturaTeste = 300;
-
-// ------------------------------------------------------------
-// Equação (3)
-// ------------------------------------------------------------
-
-const CvAl = calcularCv(
-  temperaturaTeste,
-  aluminio.theta
-);
-
-// ------------------------------------------------------------
-// Equação (4)
-// ------------------------------------------------------------
-
-const UAl = calcularU(
-  temperaturaTeste,
-  aluminio.theta
-);
-
-// ------------------------------------------------------------
-// Equação (2)
-// ------------------------------------------------------------
-
-const betaAl = calcularBeta(
-  temperaturaTeste,
-  aluminio
-);
-
-// ------------------------------------------------------------
-// Relação beta -> alpha linear
-// ------------------------------------------------------------
-
-const alphaAl = calcularAlphaLinear(
-  temperaturaTeste,
-  aluminio
-);
-
-// ============================================================
-// RESULTADOS
-// ============================================================
-
-console.log("");
-console.log("==================================================");
-console.log("   VALIDAÇÃO DO MODELO — ALUMÍNIO");
-console.log("==================================================");
-
-console.log("Material:", aluminio.nome);
-console.log("Temperatura:", temperaturaTeste, "K");
-console.log("Theta:", aluminio.theta, "K");
-
-console.log("");
-console.log("Equação (3) — Calor específico:");
-console.log(
-  "Cv =",
-  CvAl.toFixed(9),
-  "J/(mol·K)"
-);
-
-console.log("");
-console.log("Equação (4) — Energia interna:");
-console.log(
-  "U =",
-  UAl.toFixed(9),
-  "J/mol"
-);
-
-console.log("");
-console.log("Equação (2) — Expansão volumétrica:");
-console.log(
-  "Beta =",
-  betaAl.toExponential(9),
-  "1/K"
-);
-
-console.log("");
-console.log("Relação isotrópica:");
-console.log(
-  "Alpha linear = Beta / 3"
-);
-
-console.log(
-  "Alpha =",
-  alphaAl.toExponential(9),
-  "1/K"
-);
-
-console.log(
-  "Alpha =",
-  (alphaAl * 1e6).toFixed(6),
-  "×10^-6 1/K"
-);
-
-console.log("");
-console.log("==================================================");
