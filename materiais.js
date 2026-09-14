@@ -21,7 +21,7 @@ const materiais = {
     // ========================================================
 
     admiraltyBrass: {
-        nome: "Latão Admiralty",
+        nome: "Latão do Almirantado",
         simbolo: "—",
         categoria: "Liga de cobre",
         alpha: 20.2e-6,
@@ -1205,7 +1205,16 @@ const materiais = {
         unidade: "K⁻¹"
     },
 
-
+    acoCarbonoLaminado: {
+        nome: "Aço carbono laminado",
+        simbolo: "Fe-C",
+        categoria: "Aço",
+        alpha: 14.0e-6,
+        Tmin: 21.1,
+        Tmax: 427,
+        unidade: "K⁻¹"
+    },
+        
     // ========================================================
     // T
     // ========================================================
@@ -1314,20 +1323,5 @@ const materiais = {
         Tmax: 93.3,
         unidade: "K⁻¹"
     },
-
-
-    // ========================================================
-    // OUTROS
-    // ========================================================
-
-    acoCarbonoLaminado: {
-        nome: "Aço carbono laminado",
-        simbolo: "Fe-C",
-        categoria: "Aço",
-        alpha: 14.0e-6,
-        Tmin: 21.1,
-        Tmax: 427,
-        unidade: "K⁻¹"
-    }
 
 };
