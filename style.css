@@ -59,3 +59,29 @@ button {
 button:hover {
   background: #125487;
 }
+
+/* ==========================================================
+   AVISO DE EXTRAPOLAÇÃO
+   ========================================================== */
+
+.aviso-faixa {
+
+  background: #fff7d6;
+
+  border-left: 6px solid #f59e0b;
+
+  padding: 15px;
+
+  margin-bottom: 20px;
+
+  border-radius: 8px;
+
+  color: #6b4e00;
+
+}
+
+.aviso-faixa p {
+
+  margin-bottom: 8px;
+
+}
