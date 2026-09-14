@@ -32,6 +32,16 @@ function carregarMateriais() {
 
 function calcular() {
 
+    // ============================================================
+    // MATERIAL ESCOLHIDO
+    // ============================================================
+    
+    const codigoMaterial =
+        document.getElementById("material").value;
+    
+    const material =
+        materiais[codigoMaterial];
+    
     // --------------------------------------------------------
     // LER OS VALORES DO HTML
     // --------------------------------------------------------
@@ -50,10 +60,10 @@ function calcular() {
 
 
     // --------------------------------------------------------
-    // COEFICIENTE DO ALUMÍNIO
+    // COEFICIENTE DO MATERIAL
     // --------------------------------------------------------
 
-    const alpha = 23.6e-6;
+    const alpha = material.alpha;
 
 
     // --------------------------------------------------------
@@ -63,7 +73,7 @@ function calcular() {
     const deltaT = Tf - Ti;
 
     const deltaL = L0 * alpha * deltaT;
-
+    
     const Lf = L0 + deltaL;
 
 
@@ -71,53 +81,45 @@ function calcular() {
     // MOSTRAR RESULTADO
     // --------------------------------------------------------
 
-    document.getElementById("mensagem").innerHTML = `
-
-        <h3>Resultado</h3>
-
-        <p>
-            <strong>Material:</strong>
-            Alumínio
-        </p>
-
-        <p>
-            <strong>Coeficiente α:</strong>
-            23,6 × 10⁻⁶ K⁻¹
-        </p>
-
-        <p>
-            <strong>Comprimento inicial:</strong>
-            ${L0.toFixed(6)} m
-        </p>
-
-        <p>
-            <strong>Temperatura inicial:</strong>
-            ${Ti.toFixed(2)} °C
-        </p>
-
-        <p>
-            <strong>Temperatura final:</strong>
-            ${Tf.toFixed(2)} °C
-        </p>
-
-        <p>
-            <strong>Variação de temperatura:</strong>
-            ${deltaT.toFixed(2)} °C
-        </p>
-
-        <hr>
-
-        <p>
-            <strong>Variação de comprimento:</strong>
-            ${deltaL.toFixed(6)} m
-        </p>
-
-        <p>
-            <strong>Comprimento final:</strong>
-            ${Lf.toFixed(6)} m
-        </p>
+    mensagem.innerHTML = `
+    
+    <h3>Resultado</h3>
+    
+    <p><strong>Material:</strong> ${material.nome}</p>
+    
+    <p><strong>Símbolo químico:</strong> ${material.simbolo}</p>
+    
+    <p><strong>Categoria:</strong> ${material.categoria}</p>
+    
+    <p><strong>Coeficiente α:</strong>
+    ${formatarAlpha(material.alpha)} K⁻¹</p>
+    
+    <p><strong>Faixa experimental:</strong>
+    ${material.Tmin} °C até ${material.Tmax} °C</p>
+    
+    <hr>
+    
+    <p><strong>Comprimento inicial:</strong>
+    ${L0.toFixed(6)} m</p>
+    
+    <p><strong>Temperatura inicial:</strong>
+    ${Ti.toFixed(2)} °C</p>
+    
+    <p><strong>Temperatura final:</strong>
+    ${Tf.toFixed(2)} °C</p>
+    
+    <p><strong>ΔT:</strong>
+    ${deltaT.toFixed(2)} °C</p>
+    
+    <hr>
+    
+    <p><strong>ΔL:</strong>
+    ${deltaL.toFixed(6)} m</p>
+    
+    <p><strong>Comprimento final:</strong>
+    ${Lf.toFixed(6)} m</p>
+    
     `;
-}
 
 // ============================================================
 // INICIALIZA O SIMULADOR
