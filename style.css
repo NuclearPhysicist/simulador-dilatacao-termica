@@ -1,87 +1,471 @@
+/* =========================================================
+   SIMULADOR DE DILATAÇÃO TÉRMICA
+   Papadakis (1972)
+   ========================================================= */
+
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-  color: #202124;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f5f8;
+    color: #1f2937;
+    line-height: 1.6;
 }
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+   ========================================================= */
 
 .container {
-  width: min(900px, 92%);
-  margin: 40px auto;
+    width: min(1100px, 92%);
+    margin: 0 auto;
+    padding: 30px 0 50px;
 }
 
-h1 {
-  margin-bottom: 10px;
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.cabecalho {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid #dce3ea;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
+
+.cabecalho h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    color: #163a5f;
+}
+
+.cabecalho p {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* =========================================================
+   SEÇÕES
+   ========================================================= */
 
 .simulador,
-.resultado {
-  background: white;
-  padding: 24px;
-  margin-top: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.resultado,
+.referencia {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    border: 1px solid #dce3ea;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
 
-label {
-  display: block;
-  margin-top: 16px;
-  margin-bottom: 6px;
-  font-weight: bold;
+.simulador h2,
+.resultado h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #163a5f;
+    font-size: 1.4rem;
 }
 
-input,
-select,
-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
+.referencia h3 {
+    margin-top: 0;
+    color: #163a5f;
 }
 
-input,
-select {
-  border: 1px solid #b8bec8;
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.campo {
+    margin-bottom: 20px;
 }
 
-button {
-  margin-top: 24px;
-  border: none;
-  background: #1769aa;
-  color: white;
-  cursor: pointer;
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #334155;
 }
 
-button:hover {
-  background: #125487;
+.campo input,
+.campo select {
+    width: 100%;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* ==========================================================
-   AVISO DE EXTRAPOLAÇÃO
-   ========================================================== */
-
-.aviso-faixa {
-
-  background: #fff7d6;
-
-  border-left: 6px solid #f59e0b;
-
-  padding: 15px;
-
-  margin-bottom: 20px;
-
-  border-radius: 8px;
-
-  color: #6b4e00;
-
+.campo input:focus,
+.campo select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.aviso-faixa p {
+/* =========================================================
+   INPUT + UNIDADE
+   ========================================================= */
 
-  margin-bottom: 8px;
+.input-unidade {
+    display: flex;
+    align-items: center;
+}
 
+.input-unidade input {
+    border-radius: 8px 0 0 8px;
+}
+
+.input-unidade span {
+    height: 46px;
+    min-width: 54px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9eef3;
+    border: 1px solid #cbd5e1;
+    border-left: 0;
+    border-radius: 0 8px 8px 0;
+
+    color: #475569;
+    font-weight: 600;
+}
+
+/* =========================================================
+   INFORMAÇÕES DO MATERIAL
+   ========================================================= */
+
+.informacoes-material,
+.coeficientes-material {
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.informacoes-material h3,
+.coeficientes-material h3 {
+    margin: 0 0 16px;
+    font-size: 1rem;
+    color: #334155;
+}
+
+.dados-material,
+.dados-coeficientes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.dados-coeficientes {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.dados-material div,
+.dados-coeficientes div {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.dados-material span,
+.dados-coeficientes span {
+    display: block;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.dados-material strong,
+.dados-coeficientes strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+/* =========================================================
+   BOTÃO
+   ========================================================= */
+
+#calcular {
+    width: 100%;
+    height: 50px;
+    margin-top: 24px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        transform 0.1s,
+        box-shadow 0.2s;
+}
+
+#calcular:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+#calcular:active {
+    transform: translateY(1px);
+}
+
+/* =========================================================
+   MENSAGEM INICIAL
+   ========================================================= */
+
+#mensagem {
+    padding: 16px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+#mensagem p {
+    margin: 0;
+}
+
+/* =========================================================
+   RESULTADOS
+   ========================================================= */
+
+.resultado-calculo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.resultado-item {
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.resultado-item span {
+    display: block;
+    font-size: 0.88rem;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.resultado-item strong {
+    display: inline-block;
+    font-size: 1.35rem;
+    color: #1e293b;
+}
+
+.resultado-item small {
+    margin-left: 5px;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* =========================================================
+   RESULTADO EM DESTAQUE
+   ========================================================= */
+
+.resultado-item.destaque {
+    background: #eef5ff;
+    border-color: #bfdbfe;
+}
+
+.resultado-item.destaque strong {
+    color: #1d4ed8;
+    font-size: 1.55rem;
+}
+
+/* =========================================================
+   EQUAÇÃO
+   ========================================================= */
+
+.equacao {
+    margin-top: 24px;
+    padding: 22px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.equacao h3 {
+    margin-top: 0;
+    color: #334155;
+}
+
+.equacao p {
+    color: #475569;
+}
+
+.formula {
+    margin: 14px 0;
+    padding: 16px;
+
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1.15rem;
+    color: #0f172a;
+
+    overflow-x: auto;
+}
+
+.equacao .unidade {
+    margin-bottom: 0;
+}
+
+/* =========================================================
+   ALERTA
+   ========================================================= */
+
+.alerta {
+    margin-top: 20px;
+    padding: 16px;
+
+    border-radius: 8px;
+
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+
+    color: #9a3412;
+}
+
+.alerta strong {
+    color: #7c2d12;
+}
+
+/* =========================================================
+   REFERÊNCIA
+   ========================================================= */
+
+.referencia {
+    color: #64748b;
+}
+
+.referencia h3 {
+    font-size: 1rem;
+}
+
+.referencia p {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.referencia p:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================================================
+   RESPONSIVIDADE — TABLETS
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .container {
+        width: min(94%, 700px);
+        padding-top: 20px;
+    }
+
+    .cabecalho,
+    .simulador,
+    .resultado,
+    .referencia {
+        padding: 22px;
+    }
+
+    .dados-material {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dados-coeficientes {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .resultado-calculo {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — CELULARES
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .container {
+        width: 94%;
+        padding: 14px 0 30px;
+    }
+
+    .cabecalho,
+    .simulador,
+    .resultado,
+    .referencia {
+        padding: 18px;
+        border-radius: 10px;
+    }
+
+    .cabecalho h1 {
+        font-size: 1.55rem;
+    }
+
+    .cabecalho p {
+        font-size: 0.9rem;
+    }
+
+    .simulador h2,
+    .resultado h2 {
+        font-size: 1.2rem;
+    }
+
+    .dados-material {
+        grid-template-columns: 1fr;
+    }
+
+    .dados-coeficientes {
+        grid-template-columns: 1fr;
+    }
+
+    .resultado-item strong {
+        font-size: 1.2rem;
+    }
+
+    .resultado-item.destaque strong {
+        font-size: 1.35rem;
+    }
+
+    .formula {
+        font-size: 1rem;
+    }
 }
