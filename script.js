@@ -1,301 +1,601 @@
 // ============================================================
 // SIMULADOR DE DILATAÇÃO TÉRMICA
 // ============================================================
+//
+// Modelo matemático baseado em:
+//
+// Papadakis, E. P. (1972)
+// "Tabulation of the Coefficients of a Quadratic Function
+// for the Thermal Expansion of Various Alloys and Other
+// Engineering Materials"
+//
+// Equação:
+//
+// (L - L25) / L25 =
+// B0 × 10⁻³ +
+// B1 × 10⁻⁶ × T +
+// B2 × 10⁻⁹ × T²
+//
+// T  → temperatura em °C
+// L25 → comprimento na temperatura de referência de 25 °C
+//
+// O coeficiente de expansão linear instantâneo é:
+//
+// α(T) = (1/L) × dL/dT
+//
+// α(T) =
+// [B1 × 10⁻⁶ + 2B2 × 10⁻⁹T]
+// ------------------------------------------------------------
+// [1 + B0 × 10⁻³ + B1 × 10⁻⁶T + B2 × 10⁻⁹T²]
+//
+// Unidade de α: K⁻¹
+//
+// ============================================================
 
 
 // ============================================================
-// PREENCHE O MENU DE MATERIAIS AUTOMATICAMENTE
+// ELEMENTOS DA INTERFACE
 // ============================================================
 
-function carregarMateriais() {
+const materialSelect = document.getElementById("material");
 
-    const seletor = document.getElementById("material");
+const comprimentoInput = document.getElementById("comprimento");
 
-    // Limpa opções existentes
-    seletor.innerHTML = "";
+const temperaturaInput = document.getElementById("temperatura");
 
-    // Percorre todos os materiais cadastrados
-    Object.keys(materiais).forEach((codigo) => {
+const calcularBtn = document.getElementById("calcular");
 
-        const material = materiais[codigo];
+const resultado = document.getElementById("resultado");
 
-        const opcao = document.createElement("option");
 
-        opcao.value = codigo;
+// ============================================================
+// FUNÇÃO — DILATAÇÃO RELATIVA
+// ============================================================
+//
+// Calcula:
+//
+// ε = (L - L25) / L25
+//
+// ============================================================
 
-        opcao.textContent = material.nome;
+function calcularDilatacaoRelativa(material, T) {
 
-        seletor.appendChild(opcao);
+    const B0 = material.B0;
+    const B1 = material.B1;
+    const B2 = material.B2;
 
-    });
+    const dilatacaoRelativa =
+        B0 * 1e-3 +
+        B1 * 1e-6 * T +
+        B2 * 1e-9 * T * T;
 
+    return dilatacaoRelativa;
 }
 
 
 // ============================================================
-// FUNÇÃO PRINCIPAL DE CÁLCULO
+// FUNÇÃO — COMPRIMENTO FINAL
+// ============================================================
+//
+// L(T) = L25 × [1 + ε]
+//
+// ============================================================
+
+function calcularComprimento(material, L25, T) {
+
+    const dilatacaoRelativa =
+        calcularDilatacaoRelativa(material, T);
+
+    return L25 * (1 + dilatacaoRelativa);
+}
+
+
+// ============================================================
+// FUNÇÃO — VARIAÇÃO DE COMPRIMENTO
+// ============================================================
+//
+// ΔL = L(T) - L25
+//
+// ============================================================
+
+function calcularDeltaL(material, L25, T) {
+
+    const L = calcularComprimento(material, L25, T);
+
+    return L - L25;
+}
+
+
+// ============================================================
+// FUNÇÃO — COEFICIENTE DE EXPANSÃO LINEAR
+// ============================================================
+//
+// α(T) = (1/L) × dL/dT
+//
+// Resultado em K⁻¹
+//
+// ============================================================
+
+function calcularCoeficienteLinear(material, T) {
+
+    const B0 = material.B0;
+    const B1 = material.B1;
+    const B2 = material.B2;
+
+    // Numerador da derivada
+
+    const numerador =
+        B1 * 1e-6 +
+        2 * B2 * 1e-9 * T;
+
+    // Comprimento relativo L(T) / L25
+
+    const denominador =
+        1 +
+        B0 * 1e-3 +
+        B1 * 1e-6 * T +
+        B2 * 1e-9 * T * T;
+
+    const alpha =
+        numerador / denominador;
+
+    return alpha;
+}
+
+
+// ============================================================
+// FUNÇÃO — CONVERTER PARA NOTAÇÃO CIENTÍFICA
+// ============================================================
+
+function formatarCientifico(valor, casas = 4) {
+
+    return valor.toExponential(casas);
+}
+
+
+// ============================================================
+// FUNÇÃO — FORMATAR NÚMERO
+// ============================================================
+
+function formatarNumero(valor, casas = 6) {
+
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: casas,
+        maximumFractionDigits: casas
+    });
+}
+
+
+// ============================================================
+// FUNÇÃO — VERIFICAR TEMPERATURA
+// ============================================================
+
+function verificarTemperatura(material, T) {
+
+    if (T < material.Tmin) {
+
+        return {
+            valido: false,
+            mensagem:
+                `A temperatura está abaixo do limite ` +
+                `do modelo para este material. ` +
+                `T mínimo: ${material.Tmin} °C.`
+        };
+    }
+
+
+    if (T > material.Tmax) {
+
+        return {
+            valido: false,
+            mensagem:
+                `A temperatura está acima do limite ` +
+                `de validade do modelo para este material. ` +
+                `T máximo: ${material.Tmax} °C.`
+        };
+    }
+
+
+    return {
+        valido: true,
+        mensagem: ""
+    };
+}
+
+
+// ============================================================
+// FUNÇÃO — OBTER MATERIAL SELECIONADO
+// ============================================================
+
+function obterMaterialSelecionado() {
+
+    const chave = materialSelect.value;
+
+    return materiais[chave];
+}
+
+
+// ============================================================
+// FUNÇÃO PRINCIPAL — CALCULAR
 // ============================================================
 
 function calcular() {
 
     // --------------------------------------------------------
-    // MATERIAL ESCOLHIDO
+    // Obter material
     // --------------------------------------------------------
 
-    const codigoMaterial =
-        document.getElementById("material").value;
+    const material = obterMaterialSelecionado();
 
-    const material =
-        materiais[codigoMaterial];
-
-
-    // --------------------------------------------------------
-    // ELEMENTO ONDE O RESULTADO SERÁ MOSTRADO
-    // --------------------------------------------------------
-
-    const mensagem =
-        document.getElementById("mensagem");
-
-
-    // --------------------------------------------------------
-    // LER OS VALORES DO HTML
-    // --------------------------------------------------------
-
-    const L0 = parseFloat(
-        document.getElementById("comprimentoInicial").value
-    );
-
-    const Ti = parseFloat(
-        document.getElementById("temperaturaInicial").value
-    );
-
-    const Tf = parseFloat(
-        document.getElementById("temperaturaFinal").value
-    );
-
-
-    // --------------------------------------------------------
-    // VERIFICAÇÃO DO MATERIAL
-    // --------------------------------------------------------
 
     if (!material) {
 
-        mensagem.innerHTML = `
-            <strong>Erro:</strong>
-            material não encontrado.
-        `;
+        mostrarErro("Selecione um material.");
 
         return;
     }
 
 
     // --------------------------------------------------------
-    // VERIFICAÇÃO DO COMPRIMENTO
+    // Obter comprimento
     // --------------------------------------------------------
 
-    if (isNaN(L0) || L0 <= 0) {
+    const L25 =
+        parseFloat(comprimentoInput.value);
 
-        mensagem.innerHTML = `
-            <strong>Erro:</strong>
-            informe um comprimento inicial
-            maior que zero.
-        `;
+
+    if (isNaN(L25) || L25 <= 0) {
+
+        mostrarErro(
+            "Digite um comprimento inicial válido."
+        );
 
         return;
     }
 
 
     // --------------------------------------------------------
-    // VERIFICAÇÃO DAS TEMPERATURAS
+    // Obter temperatura
     // --------------------------------------------------------
 
-    if (isNaN(Ti) || isNaN(Tf)) {
+    const T =
+        parseFloat(temperaturaInput.value);
 
-        mensagem.innerHTML = `
-            <strong>Erro:</strong>
-            informe as temperaturas
-            inicial e final.
-        `;
+
+    if (isNaN(T)) {
+
+        mostrarErro(
+            "Digite uma temperatura válida."
+        );
 
         return;
     }
 
 
     // --------------------------------------------------------
-    // COEFICIENTE DE EXPANSÃO DO MATERIAL
+    // Verificar intervalo de temperatura
     // --------------------------------------------------------
 
-    const alpha = material.alpha;
+    const verificacao =
+        verificarTemperatura(material, T);
 
 
-    // --------------------------------------------------------
-    // VERIFICAÇÃO DA FAIXA DE TEMPERATURA
-    // --------------------------------------------------------
+    if (!verificacao.valido) {
 
-    const Tmenor = Math.min(Ti, Tf);
+        mostrarErro(verificacao.mensagem);
 
-    const Tmaior = Math.max(Ti, Tf);
-
-    let aviso = "";
+        return;
+    }
 
 
-    if (
-        Tmenor < material.Tmin ||
-        Tmaior > material.Tmax
-    ) {
+    // ========================================================
+    // CÁLCULOS
+    // ========================================================
 
-        aviso = `
-            <div class="aviso-faixa">
+    const dilatacaoRelativa =
+        calcularDilatacaoRelativa(material, T);
+
+
+    const comprimentoFinal =
+        calcularComprimento(
+            material,
+            L25,
+            T
+        );
+
+
+    const deltaL =
+        calcularDeltaL(
+            material,
+            L25,
+            T
+        );
+
+
+    const alpha =
+        calcularCoeficienteLinear(
+            material,
+            T
+        );
+
+
+    const deltaT =
+        T - material.Tref;
+
+
+    // Dilatação percentual
+
+    const dilatacaoPercentual =
+        dilatacaoRelativa * 100;
+
+
+    // ========================================================
+    // EXIBIR RESULTADO
+    // ========================================================
+
+    resultado.innerHTML = `
+
+        <div class="resultado-card">
+
+            <h2>${material.nome}</h2>
+
+            <div class="resultado-item">
+
+                <span>Temperatura</span>
 
                 <strong>
-                    ⚠ Atenção: extrapolação dos dados
+                    ${formatarNumero(T, 2)} °C
                 </strong>
 
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Temperatura de referência</span>
+
+                <strong>
+                    ${formatarNumero(material.Tref, 2)} °C
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Variação de temperatura</span>
+
+                <strong>
+                    ${formatarNumero(deltaT, 2)} K
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item destaque">
+
+                <span>
+                    Coeficiente de expansão linear
+                </span>
+
+                <strong>
+                    ${formatarCientifico(alpha)} K⁻¹
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Dilatação relativa</span>
+
+                <strong>
+                    ${formatarCientifico(dilatacaoRelativa)}
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Dilatação percentual</span>
+
+                <strong>
+                    ${formatarNumero(dilatacaoPercentual, 6)} %
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Comprimento inicial</span>
+
+                <strong>
+                    ${formatarNumero(L25, 6)} m
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Variação de comprimento</span>
+
+                <strong>
+                    ${formatarNumero(deltaL, 9)} m
+                </strong>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>Comprimento final</span>
+
+                <strong>
+                    ${formatarNumero(comprimentoFinal, 9)} m
+                </strong>
+
+            </div>
+
+
+            <div class="material-info">
+
                 <p>
-                    Para o material
-                    <strong>${material.nome}</strong>,
-                    a faixa indicada dos dados é:
-                    <strong>
-                        ${material.Tmin} °C
-                        a
-                        ${material.Tmax} °C
-                    </strong>.
+                    <strong>Modelo:</strong>
+                    Papadakis (1972)
                 </p>
 
                 <p>
-                    O intervalo informado foi:
-                    <strong>
-                        ${Ti} °C → ${Tf} °C
-                    </strong>.
+                    <strong>Faixa de validade:</strong>
+                    ${material.Tmin} °C a ${material.Tmax} °C
                 </p>
 
                 <p>
-                    O cálculo será realizado, mas o resultado
-                    representa uma extrapolação da faixa indicada.
+                    <strong>ρ:</strong>
+                    ${material.rho} g/cm³
                 </p>
 
             </div>
-        `;
+
+        </div>
+    `;
+}
+
+
+// ============================================================
+// FUNÇÃO — MOSTRAR ERRO
+// ============================================================
+
+function mostrarErro(mensagem) {
+
+    resultado.innerHTML = `
+
+        <div class="erro">
+
+            ${mensagem}
+
+        </div>
+
+    `;
+}
+
+
+// ============================================================
+// ATUALIZAR INFORMAÇÕES DO MATERIAL
+// ============================================================
+
+function atualizarInformacoesMaterial() {
+
+    const material =
+        obterMaterialSelecionado();
+
+
+    if (!material) {
+        return;
     }
 
 
     // --------------------------------------------------------
-    // VARIAÇÃO DE TEMPERATURA
+    // Atualizar temperatura máxima do input
     // --------------------------------------------------------
 
-    const deltaT = Tf - Ti;
+    temperaturaInput.min =
+        material.Tmin;
 
-
-    // --------------------------------------------------------
-    // VARIAÇÃO DE COMPRIMENTO
-    // --------------------------------------------------------
-
-    const deltaL =
-        L0 * alpha * deltaT;
+    temperaturaInput.max =
+        material.Tmax;
 
 
     // --------------------------------------------------------
-    // COMPRIMENTO FINAL
+    // Mostrar informação no console
     // --------------------------------------------------------
 
-    const Lf =
-        L0 + deltaL;
-
-
-    // --------------------------------------------------------
-    // MOSTRAR RESULTADO
-    // --------------------------------------------------------
-
-    mensagem.innerHTML = `
-
-        ${aviso}
-
-        <h3>Resultado</h3>
-
-        <p>
-            <strong>Material:</strong>
-            ${material.nome}
-        </p>
-
-        <p>
-            <strong>Símbolo químico:</strong>
-            ${material.simbolo}
-        </p>
-
-        <p>
-            <strong>Categoria:</strong>
-            ${material.categoria}
-        </p>
-
-        <p>
-            <strong>Coeficiente α:</strong>
-            ${formatarAlpha(alpha)} K⁻¹
-        </p>
-
-        <p>
-            <strong>Faixa dos dados:</strong>
-            ${material.Tmin} °C até ${material.Tmax} °C
-        </p>
-
-        <hr>
-
-        <p>
-            <strong>Comprimento inicial:</strong>
-            ${L0.toFixed(6)} m
-        </p>
-
-        <p>
-            <strong>Temperatura inicial:</strong>
-            ${Ti.toFixed(2)} °C
-        </p>
-
-        <p>
-            <strong>Temperatura final:</strong>
-            ${Tf.toFixed(2)} °C
-        </p>
-
-        <p>
-            <strong>Variação de temperatura:</strong>
-            ${deltaT.toFixed(2)} °C
-        </p>
-
-        <hr>
-
-        <p>
-            <strong>Variação de comprimento:</strong>
-            ${deltaL.toFixed(6)} m
-        </p>
-
-        <p>
-            <strong>Comprimento final:</strong>
-            ${Lf.toFixed(6)} m
-        </p>
-
-    `;
-
-}
-
-
-// ============================================================
-// FORMATAÇÃO DO COEFICIENTE α
-// ============================================================
-
-function formatarAlpha(alpha) {
-
-    return (
-        (alpha * 1e6).toFixed(2)
-        + " × 10⁻⁶"
+    console.log(
+        "Material selecionado:",
+        material.nome
     );
 
+    console.log(
+        "B0:",
+        material.B0
+    );
+
+    console.log(
+        "B1:",
+        material.B1
+    );
+
+    console.log(
+        "B2:",
+        material.B2
+    );
+
+    console.log(
+        "Temperatura máxima:",
+        material.Tmax,
+        "°C"
+    );
+
+    console.log(
+        "Densidade:",
+        material.rho,
+        "g/cm³"
+    );
 }
 
 
 // ============================================================
-// INICIALIZA O SIMULADOR
+// EVENTOS
 // ============================================================
 
-window.onload = function () {
+calcularBtn.addEventListener(
+    "click",
+    calcular
+);
 
-    carregarMateriais();
 
-};
+materialSelect.addEventListener(
+    "change",
+    atualizarInformacoesMaterial
+);
+
+
+// ============================================================
+// PERMITIR ENTER NOS CAMPOS
+// ============================================================
+
+comprimentoInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            calcular();
+
+        }
+
+    }
+);
+
+
+temperaturaInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            calcular();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+atualizarInformacoesMaterial();
