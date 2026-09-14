@@ -606,8 +606,9 @@ function calcular() {
     // α
     // --------------------------------------------------------
 
-    alphaResultado.textContent =
-        `${formatarCientifico(alpha)} K⁻¹`;
+    const alphaMicro = alpha * 1e6;
+
+    alphaResultado.textContent = `${formatarNumero(alphaMicro, 4)} × 10⁻⁶`;
 
 
     // --------------------------------------------------------
