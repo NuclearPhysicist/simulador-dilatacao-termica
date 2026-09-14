@@ -1,461 +1,595 @@
-const materiais = {
-  Ag: {
-    nome: "Prata",
-    simbolo: "Ag",
-    estrutura: "fcc",
-    k: 3.6897,
-    Q0: 472.6139,
-    theta: 214,
-    thetaD: 225
-  },
+// ============================================================
+// MATERIAIS — DILATAÇÃO TÉRMICA
+// ============================================================
+//
+// Coeficiente de expansão linear médio
+// Unidade: K⁻¹
+//
+// alpha = valor × 10⁻⁶ K⁻¹
+//
+// Tmin e Tmax = intervalo de temperatura em °C
+//
+// Fonte:
+// Engineering ToolBox — Thermal Expansion of Metals
+// ============================================================
 
-  Al: {
+const materiais = {
+
+  // ==========================================================
+  // METAIS E LIGAS DE ALUMÍNIO
+  // ==========================================================
+
+  aluminio: {
     nome: "Alumínio",
     simbolo: "Al",
-    estrutura: "fcc",
-    k: 4.4516,
-    Q0: 379.106,
-    theta: 367,
-    thetaD: 428
+    categoria: "Metal",
+    alpha: 23.6e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Au: {
-    nome: "Ouro",
-    simbolo: "Au",
-    estrutura: "fcc",
-    k: 4.6685,
-    Q0: 639.1281,
-    theta: 161,
-    thetaD: 165
+  bronzeAluminio: {
+    nome: "Bronze de alumínio",
+    simbolo: "—",
+    categoria: "Liga de cobre",
+    alpha: 16.2e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Be: {
-    nome: "Berílio",
-    simbolo: "Be",
-    estrutura: "hcp",
-    k: 2.618,
-    Q0: 476.6529,
-    theta: 957,
-    thetaD: 1440
+  ligaAluminio2011: {
+    nome: "Liga de alumínio 2011",
+    simbolo: "Al 2011",
+    categoria: "Liga de alumínio",
+    alpha: 23.0e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Bi: {
-    nome: "Bismuto",
-    simbolo: "Bi",
-    estrutura: "hcp",
-    k: 0.0866,
-    Q0: 633.1196,
-    theta: 121,
-    thetaD: 119
+  ligaAluminio2017: {
+    nome: "Liga de alumínio 2017",
+    simbolo: "Al 2017",
+    categoria: "Liga de alumínio",
+    alpha: 23.6e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Ca: {
-    nome: "Cálcio",
-    simbolo: "Ca",
-    estrutura: "fcc",
-    k: 1.7932,
-    Q0: 386.3696,
-    theta: 231,
-    thetaD: 230
+  ligaAluminio2024: {
+    nome: "Liga de alumínio 2024",
+    simbolo: "Al 2024",
+    categoria: "Liga de alumínio",
+    alpha: 23.2e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Cd: {
-    nome: "Cádmio",
-    simbolo: "Cd",
-    estrutura: "hcp",
-    k: 3.7944,
-    Q0: 307.0226,
-    theta: 112,
-    thetaD: 209
+  ligaAluminio3003: {
+    nome: "Liga de alumínio 3003",
+    simbolo: "Al 3003",
+    categoria: "Liga de alumínio",
+    alpha: 23.2e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Co_hcp: {
-    nome: "Cobalto",
-    simbolo: "Co",
-    estrutura: "hcp",
-    k: 4.6481,
-    Q0: 624.3493,
-    theta: 388,
-    thetaD: 445
+  ligaAluminio5052: {
+    nome: "Liga de alumínio 5052",
+    simbolo: "Al 5052",
+    categoria: "Liga de alumínio",
+    alpha: 23.8e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Co_fcc: {
-    nome: "Cobalto",
-    simbolo: "Co",
-    estrutura: "fcc",
-    k: 2.2879,
-    Q0: 625.7783,
-    theta: 385,
-    thetaD: 385
+  ligaAluminio5086: {
+    nome: "Liga de alumínio 5086",
+    simbolo: "Al 5086",
+    categoria: "Liga de alumínio",
+    alpha: 23.8e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Cr: {
-    nome: "Cromo",
-    simbolo: "Cr",
-    estrutura: "bcc",
-    k: 7.9455,
-    Q0: 971.7697,
-    theta: 750,
-    thetaD: 630
+  ligaAluminio6061: {
+    nome: "Liga de alumínio 6061",
+    simbolo: "Al 6061",
+    categoria: "Liga de alumínio",
+    alpha: 23.4e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Cu: {
-    nome: "Cobre",
-    simbolo: "Cu",
-    estrutura: "fcc",
-    k: 3.5344,
-    Q0: 511.9897,
-    theta: 315,
-    thetaD: 343
+  ligaAluminio7075: {
+    nome: "Liga de alumínio 7075",
+    simbolo: "Al 7075",
+    categoria: "Liga de alumínio",
+    alpha: 23.6e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
   },
 
-  Fe_bcc: {
-    nome: "Ferro",
-    simbolo: "Fe",
-    estrutura: "bcc",
-    k: 0.2853,
-    Q0: 608.3791,
-    theta: 488,
-    thetaD: 470
-  },
+  // ==========================================================
+  // METAIS
+  // ==========================================================
 
-  Fe_fcc: {
-    nome: "Ferro",
-    simbolo: "Fe",
-    estrutura: "fcc",
-    k: 0.2061,
-    Q0: 340.6442,
-    theta: 420,
-    thetaD: 420
-  },
-
-  Ge: {
-    nome: "Germânio",
-    simbolo: "Ge",
-    estrutura: "fcc",
-    k: 5.0997,
-    Q0: 1286.255,
-    theta: 515,
-    thetaD: 374
-  },
-
-  Hf: {
-    nome: "Háfnio",
-    simbolo: "Hf",
-    estrutura: "hcp",
-    k: 8.5687,
-    Q0: 1477.475,
-    theta: 160,
-    thetaD: 252
-  },
-
-  In: {
-    nome: "Índio",
-    simbolo: "In",
-    estrutura: "hcp",
-    k: 8.9887,
-    Q0: 354.3489,
-    theta: 109,
-    thetaD: 108
-  },
-
-  Ir: {
-    nome: "Irídio",
-    simbolo: "Ir",
-    estrutura: "fcc",
-    k: 7.4105,
-    Q0: 1308.14,
-    theta: 287,
-    thetaD: 420
-  },
-
-  Li: {
-    nome: "Lítio",
-    simbolo: "Li",
-    estrutura: "bcc",
-    k: 2.674,
-    Q0: 181.0102,
-    theta: 434,
-    thetaD: 344
-  },
-
-  Mg: {
-    nome: "Magnésio",
-    simbolo: "Mg",
-    estrutura: "hcp",
-    k: 4.0105,
-    Q0: 356.7582,
-    theta: 307,
-    thetaD: 400
-  },
-
-  Mn: {
-    nome: "Manganês",
-    simbolo: "Mn",
-    estrutura: "bcc",
-    k: 6.4731,
-    Q0: 389.7182,
-    theta: 490,
-    thetaD: 410
-  },
-
-  Mo: {
-    nome: "Molibdênio",
-    simbolo: "Mo",
-    estrutura: "bcc",
-    k: 14.0361,
-    Q0: 1958.922,
-    theta: 219,
-    thetaD: 450
-  },
-
-  Na: {
-    nome: "Sódio",
-    simbolo: "Na",
-    estrutura: "bcc",
-    k: 0.9866,
-    Q0: 121.1927,
-    theta: 300,
-    thetaD: 158
-  },
-
-  Nb: {
-    nome: "Nióbio",
-    simbolo: "Nb",
-    estrutura: "bcc",
-    k: 3.1596,
-    Q0: 1115.179,
-    theta: 307,
-    thetaD: 275
-  },
-
-  Ni: {
-    nome: "Níquel",
-    simbolo: "Ni",
-    estrutura: "fcc",
-    k: 2.7276,
-    Q0: 578.1584,
-    theta: 440,
-    thetaD: 450
-  },
-
-  Os: {
-    nome: "Ósmio",
-    simbolo: "Os",
-    estrutura: "hcp",
-    k: 5.5187,
-    Q0: 1610.491,
-    theta: 250,
-    thetaD: 500
-  },
-
-  Pb: {
-    nome: "Chumbo",
-    simbolo: "Pb",
-    estrutura: "fcc",
-    k: 3.6917,
-    Q0: 332.0544,
-    theta: 89,
-    thetaD: 105
-  },
-
-  Pd: {
-    nome: "Paládio",
-    simbolo: "Pd",
-    estrutura: "fcc",
-    k: 4.2628,
-    Q0: 720.8621,
-    theta: 283,
-    thetaD: 274
-  },
-
-  Pt: {
-    nome: "Platina",
-    simbolo: "Pt",
-    estrutura: "fcc",
-    k: 5.1792,
-    Q0: 976.3254,
-    theta: 226,
-    thetaD: 240
-  },
-
-  Re: {
-    nome: "Rênio",
-    simbolo: "Re",
-    estrutura: "hcp",
-    k: 3.797,
-    Q0: 1306.291,
-    theta: 315,
-    thetaD: 430
-  },
-
-  Rh: {
-    nome: "Ródio",
-    simbolo: "Rh",
-    estrutura: "fcc",
-    k: 7.3312,
-    Q0: 981.3101,
-    theta: 224,
-    thetaD: 480
-  },
-
-  Ru: {
-    nome: "Rutênio",
-    simbolo: "Ru",
-    estrutura: "hcp",
-    k: 9.2628,
-    Q0: 1302.515,
-    theta: 234,
-    thetaD: 600
-  },
-
-  Sb: {
+  antimonio: {
     nome: "Antimônio",
     simbolo: "Sb",
-    estrutura: "hcp",
-    k: 2.1217,
-    Q0: 768.8687,
-    theta: 183,
-    thetaD: 211
+    categoria: "Metal",
+    alpha: 9.0e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Sc: {
-    nome: "Escândio",
-    simbolo: "Sc",
-    estrutura: "hcp",
-    k: 3.6194,
-    Q0: 792.7256,
-    theta: 476,
-    thetaD: 360
+  berilio: {
+    nome: "Berílio",
+    simbolo: "Be",
+    categoria: "Metal",
+    alpha: 12.1e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Si: {
+  cobreBerilio: {
+    nome: "Cobre-berílio",
+    simbolo: "Cu-Be",
+    categoria: "Liga de cobre",
+    alpha: 16.7e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  bismuto: {
+    nome: "Bismuto",
+    simbolo: "Bi",
+    categoria: "Metal",
+    alpha: 13.0e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  cromo: {
+    nome: "Cromo",
+    simbolo: "Cr",
+    categoria: "Metal",
+    alpha: 5.94e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  cobalto: {
+    nome: "Cobalto",
+    simbolo: "Co",
+    categoria: "Metal",
+    alpha: 12.1e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  cobre: {
+    nome: "Cobre",
+    simbolo: "Cu",
+    categoria: "Metal",
+    alpha: 17.6e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
+  },
+
+  cuproniquel: {
+    nome: "Cuproníquel",
+    simbolo: "Cu-Ni",
+    categoria: "Liga de cobre",
+    alpha: 16.2e-6,
+    Tmin: 20,
+    Tmax: 300,
+    unidade: "K⁻¹"
+  },
+
+  ouro: {
+    nome: "Ouro",
+    simbolo: "Au",
+    categoria: "Metal",
+    alpha: 14.2e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  iridio: {
+    nome: "Irídio",
+    simbolo: "Ir",
+    categoria: "Metal",
+    alpha: 5.94e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  magnesio: {
+    nome: "Magnésio",
+    simbolo: "Mg",
+    categoria: "Metal",
+    alpha: 25.2e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  manganes: {
+    nome: "Manganês",
+    simbolo: "Mn",
+    categoria: "Metal",
+    alpha: 21.6e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  molibdenio: {
+    nome: "Molibdênio",
+    simbolo: "Mo",
+    categoria: "Metal",
+    alpha: 5.4e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  niobio: {
+    nome: "Nióbio",
+    simbolo: "Nb",
+    categoria: "Metal",
+    alpha: 7.02e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  osmio: {
+    nome: "Ósmio",
+    simbolo: "Os",
+    categoria: "Metal",
+    alpha: 5.04e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  platina: {
+    nome: "Platina",
+    simbolo: "Pt",
+    categoria: "Metal",
+    alpha: 9.0e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  plutonio: {
+    nome: "Plutônio",
+    simbolo: "Pu",
+    categoria: "Metal",
+    alpha: 35.7e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  potassio: {
+    nome: "Potássio",
+    simbolo: "K",
+    categoria: "Metal alcalino",
+    alpha: 82.8e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  rodio: {
+    nome: "Ródio",
+    simbolo: "Rh",
+    categoria: "Metal",
+    alpha: 7.92e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  selenio: {
+    nome: "Selênio",
+    simbolo: "Se",
+    categoria: "Semimetal",
+    alpha: 37.8e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  silicio: {
     nome: "Silício",
     simbolo: "Si",
-    estrutura: "fcc",
-    k: 2.2038,
-    Q0: 1887.789,
-    theta: 1101,
-    thetaD: 645
+    categoria: "Semicondutor",
+    alpha: 5.04e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Sn: {
-    nome: "Estanho",
-    simbolo: "Sn",
-    estrutura: "hcp",
-    k: 8.5492,
-    Q0: 469.0371,
-    theta: 164,
-    thetaD: 200
+  prata: {
+    nome: "Prata",
+    simbolo: "Ag",
+    categoria: "Metal",
+    alpha: 19.8e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Ta: {
+  sodio: {
+    nome: "Sódio",
+    simbolo: "Na",
+    categoria: "Metal alcalino",
+    alpha: 70.2e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  tantalo: {
     nome: "Tântalo",
     simbolo: "Ta",
-    estrutura: "bcc",
-    k: 11.0824,
-    Q0: 1653.603,
-    theta: 158,
-    thetaD: 240
+    categoria: "Metal",
+    alpha: 6.48e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Th: {
+  torio: {
     nome: "Tório",
     simbolo: "Th",
-    estrutura: "fcc",
-    k: 4.6252,
-    Q0: 782.6518,
-    theta: 163,
-    thetaD: 163
+    categoria: "Metal",
+    alpha: 12.1e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Ti_hcp: {
+  estanho: {
+    nome: "Estanho",
+    simbolo: "Sn",
+    categoria: "Metal",
+    alpha: 23.0e-6,
+    Tmin: 0,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  titanio: {
     nome: "Titânio",
     simbolo: "Ti",
-    estrutura: "hcp",
-    k: 4.7097,
-    Q0: 898.7748,
-    theta: 422,
-    thetaD: 420
+    categoria: "Metal",
+    alpha: 8.64e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  Ti_bcc: {
-    nome: "Titânio",
-    simbolo: "Ti",
-    estrutura: "bcc",
-    k: 6.8934,
-    Q0: 1074.047,
-    theta: 300,
-    thetaD: 300
+  ligaTitanioTi5Al25Sn: {
+    nome: "Liga de titânio Ti-5Al-2,5Sn",
+    simbolo: "Ti-5Al-2,5Sn",
+    categoria: "Liga de titânio",
+    alpha: 9.54e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  V: {
-    nome: "Vanádio",
-    simbolo: "V",
-    estrutura: "bcc",
-    k: 5.9149,
-    Q0: 946.3259,
-    theta: 395,
-    thetaD: 380
+  ti8Mn: {
+    nome: "Liga de titânio Ti-8Mn",
+    simbolo: "Ti-8Mn",
+    categoria: "Liga de titânio",
+    alpha: 10.8e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  W: {
+  tungstenio: {
     nome: "Tungstênio",
     simbolo: "W",
-    estrutura: "bcc",
-    k: 9.2307,
-    Q0: 2027.944,
-    theta: 291,
-    thetaD: 400
+    categoria: "Metal",
+    alpha: 4.5e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  Y: {
-    nome: "Ítrio",
-    simbolo: "Y",
-    estrutura: "hcp",
-    k: 3.9089,
-    Q0: 816.8919,
-    theta: 275,
-    thetaD: 280
+  uranio: {
+    nome: "Urânio",
+    simbolo: "U",
+    categoria: "Metal",
+    alpha: 13.3e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  Yb: {
-    nome: "Itérbio",
-    simbolo: "Yb",
-    estrutura: "bcc",
-    k: 3.2559,
-    Q0: 368.0229,
-    theta: 195,
-    thetaD: 120
+  vanadio: {
+    nome: "Vanádio",
+    simbolo: "V",
+    categoria: "Metal",
+    alpha: 7.92e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  Zn: {
+  zinco: {
     nome: "Zinco",
     simbolo: "Zn",
-    estrutura: "hcp",
-    k: 1.7497,
-    Q0: 291.5521,
-    theta: 181,
-    thetaD: 327
+    categoria: "Metal",
+    alpha: 34.2e-6,
+    Tmin: 20,
+    Tmax: 93.3,
+    unidade: "K⁻¹"
   },
 
-  Zr_hcp: {
-    nome: "Zircônio",
-    simbolo: "Zr",
-    estrutura: "hcp",
-    k: 10.4648,
-    Q0: 1460.968,
-    theta: 286,
-    thetaD: 291
+  // ==========================================================
+  // FERROS E AÇOS
+  // ==========================================================
+
+  ferroFundidoCinza: {
+    nome: "Ferro fundido cinzento",
+    simbolo: "Fe",
+    categoria: "Ferro fundido",
+    alpha: 10.4e-6,
+    Tmin: 0,
+    Tmax: 100,
+    unidade: "K⁻¹"
   },
 
-  Zr_bcc: {
-    nome: "Zircônio",
-    simbolo: "Zr",
-    estrutura: "bcc",
-    k: 6.6146,
-    Q0: 1240.919,
-    theta: 212,
-    thetaD: 212
+  acoFundido3Carbono: {
+    nome: "Aço fundido, 3% de carbono",
+    simbolo: "Fe-C",
+    categoria: "Aço",
+    alpha: 7.0e-6,
+    Tmin: 0,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  ferroNodularPerlitico: {
+    nome: "Ferro nodular perlítico",
+    simbolo: "Fe",
+    categoria: "Ferro fundido",
+    alpha: 11.7e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  ferroPuro: {
+    nome: "Ferro puro",
+    simbolo: "Fe",
+    categoria: "Metal",
+    alpha: 12.2e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  acoMacio: {
+    nome: "Aço de baixo carbono",
+    simbolo: "Fe-C",
+    categoria: "Aço",
+    alpha: 10.6e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  acoCarbonoLaminado: {
+    nome: "Aço carbono laminado",
+    simbolo: "Fe-C",
+    categoria: "Aço",
+    alpha: 14.0e-6,
+    Tmin: 21.1,
+    Tmax: 427,
+    unidade: "K⁻¹"
+  },
+
+  ferroDuctilA536: {
+    nome: "Ferro dúctil A536 (120-90-02)",
+    simbolo: "Fe",
+    categoria: "Ferro fundido",
+    alphaMin: 10.6e-6,
+    alphaMax: 11.2e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  ferroMaleavelA220: {
+    nome: "Ferro maleável A220 (50005, 60004, 80002)",
+    simbolo: "Fe",
+    categoria: "Ferro fundido",
+    alpha: 13.5e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  // ==========================================================
+  // INVAR E KOVAR
+  // ==========================================================
+
+  invar: {
+    nome: "Invar",
+    simbolo: "Fe-Ni",
+    categoria: "Liga metálica",
+    alpha: 1.21e-6,
+    Tmin: 20,
+    Tmax: 100,
+    unidade: "K⁻¹"
+  },
+
+  kovar25_200: {
+    nome: "Kovar",
+    simbolo: "Fe-Ni-Co",
+    categoria: "Liga metálica",
+    alpha: 5.49e-6,
+    Tmin: 25,
+    Tmax: 200,
+    unidade: "K⁻¹"
+  },
+
+  kovar25_300: {
+    nome: "Kovar",
+    simbolo: "Fe-Ni-Co",
+    categoria: "Liga metálica",
+    alpha: 5.09e-6,
+    Tmin: 25,
+    Tmax: 300,
+    unidade: "K⁻¹"
+  },
+
+  kovar25_400: {
+    nome: "Kovar",
+    simbolo: "Fe-Ni-Co",
+    categoria: "Liga metálica",
+    alpha: 4.9e-6,
+    Tmin: 25,
+    Tmax: 400,
+    unidade: "K⁻¹"
+  },
+
+  kovar25_500: {
+    nome: "Kovar",
+    simbolo: "Fe-Ni-Co",
+    categoria: "Liga metálica",
+    alpha: 6.19e-6,
+    Tmin: 25,
+    Tmax: 500,
+    unidade: "K⁻¹"
   }
+
 };
