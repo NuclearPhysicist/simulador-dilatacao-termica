@@ -1011,3 +1011,310 @@ temperaturaFinalInput.addEventListener(
 carregarMateriais();
 
 atualizarInformacoesMaterial();
+
+
+// ========================================================
+// GRÁFICO DE DILATAÇÃO
+// ========================================================
+
+function desenharGrafico(material, comprimentoInicial, temperaturaInicial, temperaturaFinal) {
+
+    const canvas = document.getElementById("graficoDilatacao");
+
+    if (!canvas) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    // ----------------------------------------------------
+    // Ajuste da resolução do canvas
+    // ----------------------------------------------------
+
+    const largura = canvas.clientWidth;
+    const altura = canvas.clientHeight;
+
+    const escala = window.devicePixelRatio || 1;
+
+    canvas.width = largura * escala;
+    canvas.height = altura * escala;
+
+    ctx.setTransform(escala, 0, 0, escala, 0, 0);
+
+    // ----------------------------------------------------
+    // Área útil do gráfico
+    // ----------------------------------------------------
+
+    const margem = {
+        esquerda: 70,
+        direita: 25,
+        superior: 25,
+        inferior: 55
+    };
+
+    const larguraGrafico =
+        largura - margem.esquerda - margem.direita;
+
+    const alturaGrafico =
+        altura - margem.superior - margem.inferior;
+
+    // ----------------------------------------------------
+    // Número de pontos da curva
+    // ----------------------------------------------------
+
+    const numeroPontos = 100;
+
+    const temperaturas = [];
+    const comprimentos = [];
+
+    for (let i = 0; i <= numeroPontos; i++) {
+
+        const T =
+            temperaturaInicial +
+            (temperaturaFinal - temperaturaInicial) *
+            (i / numeroPontos);
+
+        const L = calcularComprimentoNaTemperatura(
+            material,
+            comprimentoInicial,
+            temperaturaInicial,
+            T
+        );
+
+        temperaturas.push(T);
+        comprimentos.push(L);
+    }
+
+    // ----------------------------------------------------
+    // Limites dos eixos
+    // ----------------------------------------------------
+
+    const Tmin = Math.min(...temperaturas);
+    const Tmax = Math.max(...temperaturas);
+
+    const Lmin = Math.min(...comprimentos);
+    const Lmax = Math.max(...comprimentos);
+
+    // Evita gráfico "achatado" quando a dilatação é pequena
+    const variacaoL = Lmax - Lmin;
+
+    const margemL =
+        variacaoL > 0
+            ? variacaoL * 0.12
+            : Math.abs(Lmin) * 0.001;
+
+    const eixoYMin = Lmin - margemL;
+    const eixoYMax = Lmax + margemL;
+
+    // ----------------------------------------------------
+    // Limpar canvas
+    // ----------------------------------------------------
+
+    ctx.clearRect(0, 0, largura, altura);
+
+    // ----------------------------------------------------
+    // Fundo
+    // ----------------------------------------------------
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(0, 0, largura, altura);
+
+    // ----------------------------------------------------
+    // Funções de conversão
+    // ----------------------------------------------------
+
+    function converterX(T) {
+
+        return margem.esquerda +
+            ((T - Tmin) / (Tmax - Tmin)) *
+            larguraGrafico;
+    }
+
+    function converterY(L) {
+
+        return margem.superior +
+            ((eixoYMax - L) / (eixoYMax - eixoYMin)) *
+            alturaGrafico;
+    }
+
+    // ----------------------------------------------------
+    // Grade horizontal
+    // ----------------------------------------------------
+
+    const numeroLinhas = 5;
+
+    ctx.font = "12px Arial";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i <= numeroLinhas; i++) {
+
+        const y =
+            margem.superior +
+            (i / numeroLinhas) * alturaGrafico;
+
+        const valor =
+            eixoYMax -
+            (i / numeroLinhas) *
+            (eixoYMax - eixoYMin);
+
+        ctx.strokeStyle = "#dbe3ec";
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(margem.esquerda, y);
+        ctx.lineTo(margem.esquerda + larguraGrafico, y);
+        ctx.stroke();
+
+        ctx.fillStyle = "#64748b";
+
+        ctx.fillText(
+            formatarNumero(valor, 6),
+            margem.esquerda - 10,
+            y
+        );
+    }
+
+    // ----------------------------------------------------
+    // Grade vertical
+    // ----------------------------------------------------
+
+    const numeroColunas = 5;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    for (let i = 0; i <= numeroColunas; i++) {
+
+        const x =
+            margem.esquerda +
+            (i / numeroColunas) * larguraGrafico;
+
+        const valor =
+            Tmin +
+            (i / numeroColunas) *
+            (Tmax - Tmin);
+
+        ctx.strokeStyle = "#dbe3ec";
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(x, margem.superior);
+        ctx.lineTo(x, margem.superior + alturaGrafico);
+        ctx.stroke();
+
+        ctx.fillStyle = "#64748b";
+
+        ctx.fillText(
+            `${formatarNumero(valor, 1)} °C`,
+            x,
+            margem.superior + alturaGrafico + 10
+        );
+    }
+
+    // ----------------------------------------------------
+    // Eixos
+    // ----------------------------------------------------
+
+    ctx.strokeStyle = "#64748b";
+    ctx.lineWidth = 1.5;
+
+    ctx.beginPath();
+
+    // eixo Y
+    ctx.moveTo(margem.esquerda, margem.superior);
+    ctx.lineTo(
+        margem.esquerda,
+        margem.superior + alturaGrafico
+    );
+
+    // eixo X
+    ctx.lineTo(
+        margem.esquerda + larguraGrafico,
+        margem.superior + alturaGrafico
+    );
+
+    ctx.stroke();
+
+    // ----------------------------------------------------
+    // Curva
+    // ----------------------------------------------------
+
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 3;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+
+    for (let i = 0; i < temperaturas.length; i++) {
+
+        const x = converterX(temperaturas[i]);
+        const y = converterY(comprimentos[i]);
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+    ctx.stroke();
+
+    // ----------------------------------------------------
+    // Pontos principais
+    // ----------------------------------------------------
+
+    const indicesPontos = [
+        0,
+        Math.floor(numeroPontos * 0.25),
+        Math.floor(numeroPontos * 0.50),
+        Math.floor(numeroPontos * 0.75),
+        numeroPontos
+    ];
+
+    ctx.fillStyle = "#2563eb";
+
+    for (const indice of indicesPontos) {
+
+        const x = converterX(temperaturas[indice]);
+        const y = converterY(comprimentos[indice]);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    // ----------------------------------------------------
+    // Título do eixo Y
+    // ----------------------------------------------------
+
+    ctx.save();
+
+    ctx.translate(18, margem.superior + alturaGrafico / 2);
+    ctx.rotate(-Math.PI / 2);
+
+    ctx.fillStyle = "#334155";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText("Comprimento (m)", 0, 0);
+
+    ctx.restore();
+
+    // ----------------------------------------------------
+    // Título do eixo X
+    // ----------------------------------------------------
+
+    ctx.fillStyle = "#334155";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(
+        "Temperatura (°C)",
+        margem.esquerda + larguraGrafico / 2,
+        altura - 18
+    );
+}
