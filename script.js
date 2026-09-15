@@ -1028,12 +1028,20 @@ atualizarInformacoesMaterial();
 // FUNÇÃO — DESENHAR GRÁFICO DE DILATAÇÃO
 // ============================================================
 
-function desenharGrafico(
+// --------------------------------------------------------
+// MOSTRAR RESULTADOS
+// --------------------------------------------------------
+
+resultadoCalculo.hidden = false;
+
+desenharGrafico(
     material,
     comprimentoInicial,
-    temperaturaInicial,
-    temperaturaFinal
-) {
+    Ti,
+    Tf
+);
+
+equacao.hidden = false; {
 
     const canvas =
         document.getElementById("graficoDilatacao");
