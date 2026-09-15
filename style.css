@@ -423,6 +423,19 @@ body {
 
 @media (max-width: 520px) {
 
+    .grafico {
+        padding: 18px;
+        border-radius: 10px;
+    }
+   
+    .grafico h2 {
+        font-size: 1.2rem;
+    }
+   
+    .grafico-container {
+        height: 320px;
+        padding: 5px;
+    }
     .container {
         width: 94%;
         padding: 14px 0 30px;
@@ -468,4 +481,47 @@ body {
     .formula {
         font-size: 1rem;
     }
+}
+
+
+/* =========================================================
+   GRÁFICO
+   ========================================================= */
+
+.grafico {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    border: 1px solid #dce3ea;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.grafico h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #163a5f;
+    font-size: 1.4rem;
+}
+
+.descricao-grafico {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #64748b;
+}
+
+.grafico-container {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+#graficoDilatacao {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
