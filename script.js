@@ -668,6 +668,17 @@ function calcular() {
 
     resultadoCalculo.hidden = false;
 
+    // --------------------------------------------------------
+    // DESENHAR GRÁFICO
+    // --------------------------------------------------------
+    
+    desenharGrafico(
+        material,
+        comprimentoInicial,
+        temperaturaInicial,
+        temperaturaFinal
+    );
+    
     equacao.hidden = false;
 
 
