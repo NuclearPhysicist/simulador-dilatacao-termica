@@ -1028,7 +1028,12 @@ atualizarInformacoesMaterial();
 // GRÁFICO DE DILATAÇÃO
 // ========================================================
 
-function desenharGrafico(material, comprimentoInicial, temperaturaInicial, temperaturaFinal) {
+function desenharGrafico(
+    material,
+    comprimentoInicial,
+    temperaturaInicial,
+    temperaturaFinal
+) {
 
     const canvas = document.getElementById("graficoDilatacao");
 
@@ -1038,12 +1043,39 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     const ctx = canvas.getContext("2d");
 
-    // ----------------------------------------------------
-    // Ajuste da resolução do canvas
-    // ----------------------------------------------------
+    // ========================================================
+    // CONVERTER VALORES PARA NÚMEROS
+    // ========================================================
+
+    const L0 = Number(comprimentoInicial);
+    const Ti = Number(temperaturaInicial);
+    const Tf = Number(temperaturaFinal);
+
+    // Verificação de segurança
+    if (
+        !Number.isFinite(L0) ||
+        !Number.isFinite(Ti) ||
+        !Number.isFinite(Tf)
+    ) {
+        console.error("Valores inválidos para o gráfico:", {
+            comprimentoInicial,
+            temperaturaInicial,
+            temperaturaFinal
+        });
+
+        return;
+    }
+
+    // ========================================================
+    // TAMANHO DO CANVAS
+    // ========================================================
 
     const largura = canvas.clientWidth;
     const altura = canvas.clientHeight;
+
+    if (largura <= 0 || altura <= 0) {
+        return;
+    }
 
     const escala = window.devicePixelRatio || 1;
 
@@ -1052,26 +1084,28 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     ctx.setTransform(escala, 0, 0, escala, 0, 0);
 
-    // ----------------------------------------------------
-    // Área útil do gráfico
-    // ----------------------------------------------------
+    // ========================================================
+    // MARGENS
+    // ========================================================
 
-    const margem = {
-        esquerda: 70,
-        direita: 25,
-        superior: 25,
-        inferior: 55
-    };
+    const margemEsquerda = 75;
+    const margemDireita = 25;
+    const margemSuperior = 25;
+    const margemInferior = 60;
 
     const larguraGrafico =
-        largura - margem.esquerda - margem.direita;
+        largura -
+        margemEsquerda -
+        margemDireita;
 
     const alturaGrafico =
-        altura - margem.superior - margem.inferior;
+        altura -
+        margemSuperior -
+        margemInferior;
 
-    // ----------------------------------------------------
-    // Número de pontos da curva
-    // ----------------------------------------------------
+    // ========================================================
+    // GERAR PONTOS
+    // ========================================================
 
     const numeroPontos = 100;
 
@@ -1080,25 +1114,48 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     for (let i = 0; i <= numeroPontos; i++) {
 
+        const proporcao = i / numeroPontos;
+
         const T =
-            temperaturaInicial +
-            (temperaturaFinal - temperaturaInicial) *
-            (i / numeroPontos);
+            Ti +
+            (Tf - Ti) * proporcao;
 
-        const L = calcularComprimentoNaTemperatura(
-            material,
-            comprimentoInicial,
-            temperaturaInicial,
-            T
-        );
+        const L =
+            calcularComprimentoNaTemperatura(
+                material,
+                L0,
+                Ti,
+                T
+            );
 
-        temperaturas.push(T);
-        comprimentos.push(L);
+        if (
+            Number.isFinite(T) &&
+            Number.isFinite(L)
+        ) {
+            temperaturas.push(T);
+            comprimentos.push(L);
+        }
     }
 
-    // ----------------------------------------------------
-    // Limites dos eixos
-    // ----------------------------------------------------
+    // ========================================================
+    // VERIFICAR SE OS PONTOS FORAM GERADOS
+    // ========================================================
+
+    if (
+        temperaturas.length === 0 ||
+        comprimentos.length === 0
+    ) {
+
+        console.error(
+            "Não foi possível gerar os pontos do gráfico."
+        );
+
+        return;
+    }
+
+    // ========================================================
+    // LIMITES DOS EIXOS
+    // ========================================================
 
     const Tmin = Math.min(...temperaturas);
     const Tmax = Math.max(...temperaturas);
@@ -1106,51 +1163,92 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
     const Lmin = Math.min(...comprimentos);
     const Lmax = Math.max(...comprimentos);
 
-    // Evita gráfico "achatado" quando a dilatação é pequena
-    const variacaoL = Lmax - Lmin;
+    // --------------------------------------------------------
+    // Evitar divisão por zero
+    // --------------------------------------------------------
 
-    const margemL =
-        variacaoL > 0
-            ? variacaoL * 0.12
-            : Math.abs(Lmin) * 0.001;
+    const variacaoTemperatura = Tmax - Tmin;
+    const variacaoComprimento = Lmax - Lmin;
+
+    const eixoXMin =
+        variacaoTemperatura === 0
+            ? Tmin - 1
+            : Tmin;
+
+    const eixoXMax =
+        variacaoTemperatura === 0
+            ? Tmax + 1
+            : Tmax;
+
+    // --------------------------------------------------------
+    // Margem vertical
+    // --------------------------------------------------------
+
+    let margemL;
+
+    if (variacaoComprimento > 0) {
+
+        margemL = variacaoComprimento * 0.12;
+
+    } else {
+
+        margemL =
+            Math.abs(Lmin) * 0.001;
+
+        if (margemL === 0) {
+            margemL = 0.001;
+        }
+    }
 
     const eixoYMin = Lmin - margemL;
     const eixoYMax = Lmax + margemL;
 
-    // ----------------------------------------------------
-    // Limpar canvas
-    // ----------------------------------------------------
+    // ========================================================
+    // LIMPAR CANVAS
+    // ========================================================
 
     ctx.clearRect(0, 0, largura, altura);
 
-    // ----------------------------------------------------
-    // Fundo
-    // ----------------------------------------------------
+    // ========================================================
+    // FUNDO
+    // ========================================================
 
     ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(0, 0, largura, altura);
 
-    // ----------------------------------------------------
-    // Funções de conversão
-    // ----------------------------------------------------
+    ctx.fillRect(
+        0,
+        0,
+        largura,
+        altura
+    );
+
+    // ========================================================
+    // CONVERSÃO DE COORDENADAS
+    // ========================================================
 
     function converterX(T) {
 
-        return margem.esquerda +
-            ((T - Tmin) / (Tmax - Tmin)) *
+        return margemEsquerda +
+            (
+                (T - eixoXMin) /
+                (eixoXMax - eixoXMin)
+            ) *
             larguraGrafico;
     }
 
     function converterY(L) {
 
-        return margem.superior +
-            ((eixoYMax - L) / (eixoYMax - eixoYMin)) *
+        return margemSuperior +
+            (
+                (eixoYMax - L) /
+                (eixoYMax - eixoYMin)
+            ) *
             alturaGrafico;
     }
 
-    // ----------------------------------------------------
-    // Grade horizontal
-    // ----------------------------------------------------
+    // ========================================================
+    // GRADE HORIZONTAL
+    // ========================================================
 
     const numeroLinhas = 5;
 
@@ -1160,35 +1258,48 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     for (let i = 0; i <= numeroLinhas; i++) {
 
+        const fracao = i / numeroLinhas;
+
         const y =
-            margem.superior +
-            (i / numeroLinhas) * alturaGrafico;
+            margemSuperior +
+            fracao * alturaGrafico;
 
         const valor =
             eixoYMax -
-            (i / numeroLinhas) *
+            fracao *
             (eixoYMax - eixoYMin);
 
+        // Linha
         ctx.strokeStyle = "#dbe3ec";
         ctx.lineWidth = 1;
 
         ctx.beginPath();
-        ctx.moveTo(margem.esquerda, y);
-        ctx.lineTo(margem.esquerda + larguraGrafico, y);
+
+        ctx.moveTo(
+            margemEsquerda,
+            y
+        );
+
+        ctx.lineTo(
+            margemEsquerda + larguraGrafico,
+            y
+        );
+
         ctx.stroke();
 
+        // Valor
         ctx.fillStyle = "#64748b";
 
         ctx.fillText(
             formatarNumero(valor, 6),
-            margem.esquerda - 10,
+            margemEsquerda - 10,
             y
         );
     }
 
-    // ----------------------------------------------------
-    // Grade vertical
-    // ----------------------------------------------------
+    // ========================================================
+    // GRADE VERTICAL
+    // ========================================================
 
     const numeroColunas = 5;
 
@@ -1197,59 +1308,78 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     for (let i = 0; i <= numeroColunas; i++) {
 
+        const fracao = i / numeroColunas;
+
         const x =
-            margem.esquerda +
-            (i / numeroColunas) * larguraGrafico;
+            margemEsquerda +
+            fracao * larguraGrafico;
 
         const valor =
-            Tmin +
-            (i / numeroColunas) *
-            (Tmax - Tmin);
+            eixoXMin +
+            fracao *
+            (eixoXMax - eixoXMin);
 
+        // Linha
         ctx.strokeStyle = "#dbe3ec";
         ctx.lineWidth = 1;
 
         ctx.beginPath();
-        ctx.moveTo(x, margem.superior);
-        ctx.lineTo(x, margem.superior + alturaGrafico);
+
+        ctx.moveTo(
+            x,
+            margemSuperior
+        );
+
+        ctx.lineTo(
+            x,
+            margemSuperior + alturaGrafico
+        );
+
         ctx.stroke();
 
+        // Temperatura
         ctx.fillStyle = "#64748b";
 
         ctx.fillText(
             `${formatarNumero(valor, 1)} °C`,
             x,
-            margem.superior + alturaGrafico + 10
+            margemSuperior +
+            alturaGrafico +
+            10
         );
     }
 
-    // ----------------------------------------------------
-    // Eixos
-    // ----------------------------------------------------
+    // ========================================================
+    // EIXOS
+    // ========================================================
 
     ctx.strokeStyle = "#64748b";
     ctx.lineWidth = 1.5;
 
     ctx.beginPath();
 
-    // eixo Y
-    ctx.moveTo(margem.esquerda, margem.superior);
-    ctx.lineTo(
-        margem.esquerda,
-        margem.superior + alturaGrafico
+    // Eixo Y
+    ctx.moveTo(
+        margemEsquerda,
+        margemSuperior
     );
 
-    // eixo X
     ctx.lineTo(
-        margem.esquerda + larguraGrafico,
-        margem.superior + alturaGrafico
+        margemEsquerda,
+        margemSuperior + alturaGrafico
+    );
+
+    // Eixo X
+    ctx.lineTo(
+        margemEsquerda + larguraGrafico,
+        margemSuperior + alturaGrafico
     );
 
     ctx.stroke();
 
-    // ----------------------------------------------------
-    // Curva
-    // ----------------------------------------------------
+    // ========================================================
+    // CURVA
+    // ========================================================
 
     ctx.strokeStyle = "#2563eb";
     ctx.lineWidth = 3;
@@ -1260,49 +1390,71 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     for (let i = 0; i < temperaturas.length; i++) {
 
-        const x = converterX(temperaturas[i]);
-        const y = converterY(comprimentos[i]);
+        const x =
+            converterX(temperaturas[i]);
+
+        const y =
+            converterY(comprimentos[i]);
 
         if (i === 0) {
+
             ctx.moveTo(x, y);
+
         } else {
+
             ctx.lineTo(x, y);
         }
     }
 
     ctx.stroke();
 
-    // ----------------------------------------------------
-    // Pontos principais
-    // ----------------------------------------------------
+    // ========================================================
+    // PONTOS PRINCIPAIS
+    // ========================================================
 
-    const indicesPontos = [
+    const indices = [
         0,
-        Math.floor(numeroPontos * 0.25),
-        Math.floor(numeroPontos * 0.50),
-        Math.floor(numeroPontos * 0.75),
-        numeroPontos
+        Math.floor(temperaturas.length * 0.25),
+        Math.floor(temperaturas.length * 0.50),
+        Math.floor(temperaturas.length * 0.75),
+        temperaturas.length - 1
     ];
 
     ctx.fillStyle = "#2563eb";
 
-    for (const indice of indicesPontos) {
+    for (const indice of indices) {
 
-        const x = converterX(temperaturas[indice]);
-        const y = converterY(comprimentos[indice]);
+        const x =
+            converterX(temperaturas[indice]);
+
+        const y =
+            converterY(comprimentos[indice]);
 
         ctx.beginPath();
-        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+
+        ctx.arc(
+            x,
+            y,
+            4,
+            0,
+            2 * Math.PI
+        );
+
         ctx.fill();
     }
 
-    // ----------------------------------------------------
-    // Título do eixo Y
-    // ----------------------------------------------------
+    // ========================================================
+    // TÍTULO DO EIXO Y
+    // ========================================================
 
     ctx.save();
 
-    ctx.translate(18, margem.superior + alturaGrafico / 2);
+    ctx.translate(
+        18,
+        margemSuperior +
+        alturaGrafico / 2
+    );
+
     ctx.rotate(-Math.PI / 2);
 
     ctx.fillStyle = "#334155";
@@ -1310,13 +1462,17 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText("Comprimento (m)", 0, 0);
+    ctx.fillText(
+        "Comprimento (m)",
+        0,
+        0
+    );
 
     ctx.restore();
 
-    // ----------------------------------------------------
-    // Título do eixo X
-    // ----------------------------------------------------
+    // ========================================================
+    // TÍTULO DO EIXO X
+    // ========================================================
 
     ctx.fillStyle = "#334155";
     ctx.font = "14px Arial";
@@ -1325,7 +1481,8 @@ function desenharGrafico(material, comprimentoInicial, temperaturaInicial, tempe
 
     ctx.fillText(
         "Temperatura (°C)",
-        margem.esquerda + larguraGrafico / 2,
-        altura - 18
+        margemEsquerda +
+        larguraGrafico / 2,
+        altura - 20
     );
 }
