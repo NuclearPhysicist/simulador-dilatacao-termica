@@ -606,12 +606,12 @@ function calcular() {
         comprimentoEscolar -
         comprimentoInicial;
 
-    const dilatacaoRelativaEscolar =
+    const valorDilatacaoRelativaEscolar =
         deltaLEscolar /
         comprimentoInicial;
-
-    const dilatacaoPercentualEscolar =
-        dilatacaoRelativaEscolar * 100;
+    
+    const valorDilatacaoPercentualEscolar =
+        valorDilatacaoRelativaEscolar * 100;
 
 
     // ========================================================
@@ -630,12 +630,12 @@ function calcular() {
         comprimentoPapadakis -
         comprimentoInicial;
 
-    const dilatacaoRelativaPapadakis =
+    const valorDilatacaoRelativaPapadakis =
         deltaLPapadakis /
         comprimentoInicial;
-
-    const dilatacaoPercentualPapadakis =
-        dilatacaoRelativaPapadakis * 100;
+    
+    const valorDilatacaoPercentualPapadakis =
+        valorDilatacaoRelativaPapadakis * 100;
 
 
     // ========================================================
@@ -705,12 +705,12 @@ function calcular() {
 
     dilatacaoRelativaEscolar.textContent =
         formatarCientifico(
-            dilatacaoRelativaEscolar
+            valorDilatacaoRelativaEscolar
         );
-
+    
     dilatacaoPercentualEscolar.textContent =
         `${formatarNumero(
-            dilatacaoPercentualEscolar,
+            valorDilatacaoPercentualEscolar,
             6
         )} %`;
 
@@ -733,12 +733,12 @@ function calcular() {
 
     dilatacaoRelativaPapadakis.textContent =
         formatarCientifico(
-            dilatacaoRelativaPapadakis
+            valorDilatacaoRelativaPapadakis
         );
-
+    
     dilatacaoPercentualPapadakis.textContent =
         `${formatarNumero(
-            dilatacaoPercentualPapadakis,
+            valorDilatacaoPercentualPapadakis,
             6
         )} %`;
 
