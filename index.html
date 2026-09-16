@@ -3,509 +3,767 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <meta
-    name="description"
-    content="Simulador de dilatação térmica baseado nos coeficientes de Papadakis (1972)."
-  >
+    <meta
+        name="description"
+        content="Simulador de dilatação térmica baseado nos coeficientes de Papadakis (1972)."
+    >
 
-  <title>Simulador de Dilatação Térmica</title>
+    <title>Simulador de Dilatação Térmica</title>
 
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
 
 <body>
 
-  <main class="container">
+<main class="container">
 
-    <!-- ================================================== -->
-    <!-- CABEÇALHO -->
-    <!-- ================================================== -->
+
+    <!-- ==================================================
+         CABEÇALHO
+         ================================================== -->
 
     <header class="cabecalho">
 
-      <h1>
-        Simulador de Dilatação Térmica
-      </h1>
+        <h1>
+            Simulador de Dilatação Térmica
+        </h1>
 
-      <p>
-        Estude como a temperatura modifica as dimensões
-        de diferentes materiais.
-      </p>
+        <p>
+            Estude como a temperatura modifica as dimensões
+            de diferentes materiais.
+        </p>
 
     </header>
 
 
-    <!-- ================================================== -->
-    <!-- CONFIGURAÇÃO -->
-    <!-- ================================================== -->
+
+    <!-- ==================================================
+         CONFIGURAÇÃO DA SIMULAÇÃO
+         ================================================== -->
 
     <section class="simulador">
 
-      <h2>
-        Configuração da simulação
-      </h2>
+        <h2>
+            Configuração da simulação
+        </h2>
 
 
-      <!-- MATERIAL -->
+        <!-- MATERIAL -->
 
-      <div class="campo">
+        <div class="campo">
 
-        <label for="material">
-          Material
-        </label>
+            <label for="material">
+                Material
+            </label>
 
-        <select id="material">
-
-          <!--
-            As opções serão preenchidas
-            automaticamente pelo JavaScript.
-          -->
-
-        </select>
-
-      </div>
-
-
-      <!-- COMPRIMENTO -->
-
-      <div class="campo">
-
-        <label for="comprimentoInicial">
-          Comprimento inicial
-        </label>
-
-        <div class="input-unidade">
-
-          <input
-            type="number"
-            id="comprimentoInicial"
-            value="1"
-            min="0"
-            step="0.01"
-          >
-
-          <span>
-            m
-          </span>
+            <select id="material">
+                <!-- Preenchido pelo JavaScript -->
+            </select>
 
         </div>
 
-      </div>
 
+        <!-- COMPRIMENTO INICIAL -->
 
-      <!-- TEMPERATURA INICIAL -->
+        <div class="campo">
 
-      <div class="campo">
+            <label for="comprimentoInicial">
+                Comprimento inicial
+            </label>
 
-        <label for="temperaturaInicial">
-          Temperatura inicial
-        </label>
+            <div class="input-unidade">
 
-        <div class="input-unidade">
+                <input
+                    type="number"
+                    id="comprimentoInicial"
+                    value="1"
+                    min="0"
+                    step="0.01"
+                >
 
-          <input
-            type="number"
-            id="temperaturaInicial"
-            value="25"
-            step="1"
-          >
+                <span>
+                    m
+                </span>
 
-          <span>
-            °C
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <!-- TEMPERATURA FINAL -->
-
-      <div class="campo">
-
-        <label for="temperaturaFinal">
-          Temperatura final
-        </label>
-
-        <div class="input-unidade">
-
-          <input
-            type="number"
-            id="temperaturaFinal"
-            value="100"
-            step="1"
-          >
-
-          <span>
-            °C
-          </span>
+            </div>
 
         </div>
 
-      </div>
 
+        <!-- TEMPERATURA INICIAL -->
 
-      <!-- ================================================== -->
-      <!-- INFORMAÇÕES DO MATERIAL -->
-      <!-- ================================================== -->
+        <div class="campo">
 
-      <div
-        id="informacoesMaterial"
-        class="informacoes-material"
-      >
+            <label for="temperaturaInicial">
+                Temperatura inicial
+            </label>
 
-        <h3>
-          Dados do material
-        </h3>
+            <div class="input-unidade">
 
-        <div class="dados-material">
+                <input
+                    type="number"
+                    id="temperaturaInicial"
+                    value="25"
+                    step="1"
+                >
 
-          <div>
-            <span>Referência</span>
-            <strong id="referenciaMaterial">—</strong>
-          </div>
+                <span>
+                    °C
+                </span>
 
-          <div>
-            <span>Temperatura mínima</span>
-            <strong id="tminMaterial">—</strong>
-          </div>
-
-          <div>
-            <span>Temperatura máxima</span>
-            <strong id="tmaxMaterial">—</strong>
-          </div>
-
-          <div>
-            <span>Densidade</span>
-            <strong id="rhoMaterial">—</strong>
-          </div>
+            </div>
 
         </div>
 
-      </div>
 
+        <!-- TEMPERATURA FINAL -->
 
-      <!-- ================================================== -->
-      <!-- COEFICIENTES -->
-      <!-- ================================================== -->
+        <div class="campo">
 
-      <div
-        id="coeficientesMaterial"
-        class="coeficientes-material"
-      >
+            <label for="temperaturaFinal">
+                Temperatura final
+            </label>
 
-        <h3>
-          Coeficientes de Papadakis
-        </h3>
+            <div class="input-unidade">
 
-        <div class="dados-coeficientes">
+                <input
+                    type="number"
+                    id="temperaturaFinal"
+                    value="100"
+                    step="1"
+                >
 
-          <div>
-            <span>B₀</span>
-            <strong id="b0Material">—</strong>
-          </div>
+                <span>
+                    °C
+                </span>
 
-          <div>
-            <span>B₁</span>
-            <strong id="b1Material">—</strong>
-          </div>
-
-          <div>
-            <span>B₂</span>
-            <strong id="b2Material">—</strong>
-          </div>
+            </div>
 
         </div>
 
-      </div>
 
 
-      <!-- ================================================== -->
-      <!-- BOTÃO -->
-      <!-- ================================================== -->
+        <!-- ==================================================
+             INFORMAÇÕES DO MATERIAL
+             ================================================== -->
 
-      <button
-        id="calcular"
-        type="button"
-      >
-        Calcular
-      </button>
+        <div
+            id="informacoesMaterial"
+            class="informacoes-material"
+        >
+
+            <h3>
+                Dados do material
+            </h3>
+
+
+            <div class="dados-material">
+
+                <div>
+                    <span>Referência</span>
+                    <strong id="referenciaMaterial">
+                        —
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>Temperatura mínima</span>
+                    <strong id="tminMaterial">
+                        —
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>Temperatura máxima</span>
+                    <strong id="tmaxMaterial">
+                        —
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>Densidade</span>
+                    <strong id="rhoMaterial">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             COEFICIENTES
+             ================================================== -->
+
+        <div
+            id="coeficientesMaterial"
+            class="coeficientes-material"
+        >
+
+            <h3>
+                Coeficientes de Papadakis
+            </h3>
+
+
+            <div class="dados-coeficientes">
+
+                <div>
+                    <span>B₀</span>
+                    <strong id="b0Material">
+                        —
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>B₁</span>
+                    <strong id="b1Material">
+                        —
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>B₂</span>
+                    <strong id="b2Material">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             BOTÃO
+             ================================================== -->
+
+        <button
+            id="calcular"
+            type="button"
+        >
+            Calcular
+        </button>
 
     </section>
 
 
-    <!-- ================================================== -->
-    <!-- RESULTADO -->
-    <!-- ================================================== -->
 
-    <section class="resultado">
+    <!-- ==================================================
+         RESULTADOS
+         ================================================== -->
 
-      <h2>
-        Resultado
-      </h2>
-
-
-      <div id="mensagem">
-
-        <p>
-          Configure os valores e clique em
-          <strong>Calcular</strong>.
-        </p>
-
-      </div>
-
-
-      <!-- ================================================ -->
-      <!-- RESULTADOS NUMÉRICOS -->
-      <!-- ================================================ -->
-
-      <div
+    <section
+        class="resultado"
         id="resultadoCalculo"
-        class="resultado-calculo"
         hidden
-      >
+    >
 
-        <!-- COEFICIENTE -->
+        <h2>
+            Resultado da simulação
+        </h2>
 
-        <div class="resultado-item destaque">
 
-          <span>
-            Coeficiente de expansão linear
-          </span>
+        <!-- MENSAGEM -->
 
-          <strong id="alphaResultado">
-            —
-          </strong>
+        <div
+            id="mensagem"
+            class="mensagem"
+        >
+            <p>
+                Configure os valores e clique em
+                <strong>Calcular</strong>.
+            </p>
+        </div>
 
-          <small>
-            K⁻¹
-          </small>
+
+
+        <!-- ==================================================
+             DADOS GERAIS
+             ================================================== -->
+
+        <div class="resultados-gerais">
+
+
+            <div class="resultado-item">
+
+                <span>
+                    Variação de temperatura
+                </span>
+
+                <strong id="deltaTResultado">
+                    —
+                </strong>
+
+                <small>
+                    °C
+                </small>
+
+            </div>
+
+
+            <div class="resultado-item">
+
+                <span>
+                    Coeficiente escolar α(25 °C)
+                </span>
+
+                <strong id="alphaResultado">
+                    —
+                </strong>
+
+                <small>
+                    K⁻¹
+                </small>
+
+            </div>
+
 
         </div>
 
 
-        <!-- DELTA T -->
 
-        <div class="resultado-item">
+        <!-- ==================================================
+             COMPARAÇÃO DOS DOIS MODELOS
+             ================================================== -->
 
-          <span>
-            Variação de temperatura
-          </span>
+        <div class="comparacao-modelos">
 
-          <strong id="deltaTResultado">
-            —
-          </strong>
+            <h3>
+                Comparação dos modelos
+            </h3>
 
-          <small>
-            K
-          </small>
+
+            <div class="tabela-modelos">
+
+
+                <!-- CABEÇALHO -->
+
+                <div class="cabecalho-modelo">
+
+                    <div>
+                        Grandeza
+                    </div>
+
+                    <div class="modelo-escolar">
+                        🟦 Modelo escolar
+                    </div>
+
+                    <div class="modelo-papadakis">
+                        🟩 Papadakis (1972)
+                    </div>
+
+                </div>
+
+
+
+                <!-- DILATAÇÃO RELATIVA -->
+
+                <div class="linha-modelo">
+
+                    <div>
+                        Dilatação relativa
+                    </div>
+
+                    <div id="dilatacaoRelativaEscolar">
+                        —
+                    </div>
+
+                    <div id="dilatacaoRelativaPapadakis">
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <!-- DILATAÇÃO PERCENTUAL -->
+
+                <div class="linha-modelo">
+
+                    <div>
+                        Dilatação percentual
+                    </div>
+
+                    <div id="dilatacaoPercentualEscolar">
+                        —
+                    </div>
+
+                    <div id="dilatacaoPercentualPapadakis">
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <!-- VARIAÇÃO DE COMPRIMENTO -->
+
+                <div class="linha-modelo">
+
+                    <div>
+                        Variação de comprimento ΔL
+                    </div>
+
+                    <div id="deltaLEscolar">
+                        —
+                    </div>
+
+                    <div id="deltaLPapadakis">
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <!-- COMPRIMENTO FINAL -->
+
+                <div class="linha-modelo destaque-modelo">
+
+                    <div>
+                        Comprimento final
+                    </div>
+
+                    <div id="comprimentoFinalEscolar">
+                        —
+                    </div>
+
+                    <div id="comprimentoFinalPapadakis">
+                        —
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             DIFERENÇA ENTRE OS MODELOS
+             ================================================== -->
+
+        <div class="diferenca-modelos">
+
+            <h3>
+                Diferença entre os modelos
+            </h3>
+
+
+            <p>
+
+                Diferença no comprimento final:
+
+                <strong id="diferencaComprimento">
+                    —
+                </strong>
+
+            </p>
+
+
+            <p>
+
+                Diferença relativa:
+
+                <strong id="diferencaPercentual">
+                    —
+                </strong>
+
+            </p>
 
         </div>
 
 
-        <!-- DILATAÇÃO RELATIVA -->
 
-        <div class="resultado-item">
+        <!-- ==================================================
+             EQUAÇÕES
+             ================================================== -->
 
-          <span>
-            Dilatação relativa
-          </span>
+        <div
+            class="equacoes"
+            id="equacao"
+            hidden
+        >
 
-          <strong id="dilatacaoRelativaResultado">
-            —
-          </strong>
+            <h2>
+                Modelos utilizados
+            </h2>
+
+
+            <!-- MODELO ESCOLAR -->
+
+            <div class="formula">
+
+                <h3>
+                    🟦 Modelo escolar — coeficiente constante
+                </h3>
+
+
+                <p>
+                    O coeficiente utilizado é o coeficiente
+                    linear calculado para a temperatura de
+                    referência de 25 °C.
+                </p>
+
+
+                <div class="formula-equacao">
+
+                    L(T) = Lᵢ [1 + α₂₅ (T − Tᵢ)]
+
+                </div>
+
+
+                <p>
+                    Neste modelo, α₂₅ permanece constante
+                    durante toda a variação de temperatura.
+                </p>
+
+            </div>
+
+
+
+            <!-- MODELO PAPADAKIS -->
+
+            <div class="formula">
+
+                <h3>
+                    🟩 Modelo real — Papadakis (1972)
+                </h3>
+
+
+                <p>
+                    O comprimento é obtido diretamente a
+                    partir da função quadrática de dilatação
+                    de Papadakis.
+                </p>
+
+
+                <div class="formula-equacao">
+
+                    F(T) =
+                    1 + B₀×10⁻³
+                    + B₁×10⁻⁶T
+                    + B₂×10⁻⁹T²
+
+                </div>
+
+
+                <div class="formula-equacao">
+
+                    L(T) = Lᵢ · F(T) / F(Tᵢ)
+
+                </div>
+
+            </div>
+
+
+
+            <!-- DERIVADA — FUTURA -->
+
+            <div class="formula formula-futura">
+
+                <h3>
+                    🔬 Próxima etapa: α(T)
+                </h3>
+
+
+                <p>
+                    A derivada da função de Papadakis permite
+                    calcular o coeficiente instantâneo de
+                    dilatação:
+                </p>
+
+
+                <div class="formula-equacao">
+
+                    α(T) = F'(T) / F(T)
+
+                </div>
+
+
+                <p>
+                    Essa função será utilizada futuramente
+                    para demonstrar como o coeficiente de
+                    dilatação varia com a temperatura.
+                </p>
+
+            </div>
 
         </div>
 
 
-        <!-- DILATAÇÃO PERCENTUAL -->
 
-        <div class="resultado-item">
+        <!-- ==================================================
+             ALERTA
+             ================================================== -->
 
-          <span>
-            Dilatação percentual
-          </span>
-
-          <strong id="dilatacaoPercentualResultado">
-            —
-          </strong>
-
-          <small>
-            %
-          </small>
-
+        <div
+            id="alerta"
+            class="alerta"
+            hidden
+        >
         </div>
-
-
-        <!-- DELTA L -->
-
-        <div class="resultado-item">
-
-          <span>
-            Variação de comprimento
-          </span>
-
-          <strong id="deltaLResultado">
-            —
-          </strong>
-
-          <small>
-            m
-          </small>
-
-        </div>
-
-
-        <!-- COMPRIMENTO FINAL -->
-
-        <div class="resultado-item destaque">
-
-          <span>
-            Comprimento final
-          </span>
-
-          <strong id="comprimentoFinalResultado">
-            —
-          </strong>
-
-          <small>
-            m
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <!-- ================================================== -->
-      <!-- EQUAÇÃO -->
-      <!-- ================================================== -->
-
-      <div
-        id="equacao"
-        class="equacao"
-        hidden
-      >
-
-        <h3>
-          Modelo matemático
-        </h3>
-
-        <p>
-          O cálculo utiliza a função quadrática de
-          dilatação térmica de Papadakis:
-        </p>
-
-        <div class="formula">
-
-          (L − L₂₅) / L₂₅ =
-          B₀ × 10⁻³ +
-          B₁ × 10⁻⁶ T +
-          B₂ × 10⁻⁹ T²
-
-        </div>
-
-        <p>
-          O coeficiente de expansão linear é calculado
-          como função da temperatura:
-        </p>
-
-        <div class="formula">
-
-          α(T) = (1/L) · dL/dT
-
-        </div>
-
-        <p class="unidade">
-
-          Unidade do coeficiente:
-          <strong>K⁻¹</strong>
-
-        </p>
-
-      </div>
-
-
-      <!-- ================================================== -->
-      <!-- ALERTA -->
-      <!-- ================================================== -->
-
-      <div
-        id="alerta"
-        class="alerta"
-        hidden
-      >
-      </div>
 
     </section>
 
-    
-    <!-- =====================================================
+
+
+    <!-- ==================================================
          GRÁFICO
-         ===================================================== -->
+         ================================================== -->
 
     <section class="grafico">
-      <h2>Variação do comprimento com a temperatura</h2>
 
-      <p class="descricao-grafico">
-        O gráfico mostra como o comprimento do material varia
-        com a temperatura, utilizando os coeficientes de
-        Papadakis (1972).
-      </p>
+        <h2>
+            Variação do comprimento com a temperatura
+        </h2>
 
-      <div class="grafico-container">
-        <canvas id="graficoDilatacao"></canvas>
-      </div>
+
+        <p class="descricao-grafico">
+
+            O gráfico compara o modelo escolar de
+            coeficiente de dilatação constante com o
+            modelo quadrático de Papadakis (1972).
+
+        </p>
+
+
+
+        <!-- LEGENDA -->
+
+        <div class="legenda-grafico">
+
+
+            <div class="legenda-item">
+
+                <span class="legenda-linha azul"></span>
+
+                <span>
+                    Modelo escolar — α constante
+                </span>
+
+            </div>
+
+
+            <div class="legenda-item">
+
+                <span class="legenda-linha verde"></span>
+
+                <span>
+                    Papadakis (1972) — modelo quadrático
+                </span>
+
+            </div>
+
+
+            <div class="legenda-item">
+
+                <span class="legenda-linha tracejada"></span>
+
+                <span>
+                    Temperaturas Ti e Tf
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- CANVAS -->
+
+        <div class="grafico-container">
+
+            <canvas id="graficoDilatacao"></canvas>
+
+        </div>
+
+
+
+        <p class="observacao-grafico">
+
+            O eixo horizontal apresenta toda a faixa de
+            validade do modelo para o material selecionado
+            (<span id="faixaGrafico">—</span>).
+
+            As temperaturas Ti e Tf representam apenas
+            o intervalo utilizado no cálculo.
+
+        </p>
+
     </section>
 
-    
-    <!-- ================================================== -->
-    <!-- REFERÊNCIA -->
-    <!-- ================================================== -->
+
+
+    <!-- ==================================================
+         REFERÊNCIA
+         ================================================== -->
 
     <footer class="referencia">
 
-      <h3>
-        Fonte dos dados
-      </h3>
+        <h3>
+            Fonte dos dados
+        </h3>
 
-      <p>
-        Papadakis, E. P. (1972).
-        <em>
-          Tabulation of the Coefficients of a Quadratic
-          Function for the Thermal Expansion of Various
-          Alloys and Other Engineering Materials.
-        </em>
-        Materials Science and Engineering, 10, 195–203.
-      </p>
 
-      <p>
-        O modelo utiliza 25 °C como temperatura de
-        referência e apresenta um limite superior de
-        validade para cada material.
-      </p>
+        <p>
+
+            Papadakis, E. P. (1972).
+
+            <em>
+                Tabulation of the Coefficients of a Quadratic
+                Function for the Thermal Expansion of Various
+                Alloys and Other Engineering Materials.
+            </em>
+
+            Materials Science and Engineering,
+            10, 195–203.
+
+        </p>
+
+
+        <p>
+
+            O modelo utiliza 25 °C como temperatura de
+            referência e apresenta um limite superior de
+            validade para cada material.
+
+        </p>
 
     </footer>
 
-  </main>
+
+</main>
 
 
-  <!-- ================================================== -->
-  <!-- JAVASCRIPT -->
-  <!-- ================================================== -->
 
-  <script src="materiais.js?v=7"></script>
+<!-- ==================================================
+     JAVASCRIPT
+     ================================================== -->
 
-  <script src="script.js?v=7"></script>
+<script src="materiais.js?v=8"></script>
+
+<script src="script.js?v=8"></script>
 
 
 </body>
