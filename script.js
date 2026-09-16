@@ -1,26 +1,6 @@
 // ============================================================
 // SIMULADOR DE DILATAÇÃO TÉRMICA
-// ============================================================
-//
-// Modelo baseado em:
-//
-// Papadakis, E. P. (1972)
-// Tabulation of the Coefficients of a Quadratic Function
-// for the Thermal Expansion of Various Alloys and Other
-// Engineering Materials.
-//
-// ============================================================
-//
-// EQUAÇÃO DE PAPADAKIS
-//
-// (L - L25) / L25 =
-// B0 × 10⁻³ +
-// B1 × 10⁻⁶ × T +
-// B2 × 10⁻⁹ × T²
-//
-// T    → temperatura em °C
-// L25  → comprimento na temperatura de referência de 25 °C
-//
+// Papadakis (1972)
 // ============================================================
 
 
@@ -40,22 +20,8 @@ const temperaturaInicialInput =
 const temperaturaFinalInput =
     document.getElementById("temperaturaFinal");
 
-const calcularBtn =
+const calcularButton =
     document.getElementById("calcular");
-
-const mensagem =
-    document.getElementById("mensagem");
-
-const resultadoCalculo =
-    document.getElementById("resultadoCalculo");
-
-const alerta =
-    document.getElementById("alerta");
-
-
-// ============================================================
-// ELEMENTOS — INFORMAÇÕES DO MATERIAL
-// ============================================================
 
 const referenciaMaterial =
     document.getElementById("referenciaMaterial");
@@ -78,10 +44,11 @@ const b1Material =
 const b2Material =
     document.getElementById("b2Material");
 
+const mensagem =
+    document.getElementById("mensagem");
 
-// ============================================================
-// ELEMENTOS — RESULTADOS
-// ============================================================
+const resultadoCalculo =
+    document.getElementById("resultadoCalculo");
 
 const alphaResultado =
     document.getElementById("alphaResultado");
@@ -90,80 +57,77 @@ const deltaTResultado =
     document.getElementById("deltaTResultado");
 
 const dilatacaoRelativaResultado =
-    document.getElementById(
-        "dilatacaoRelativaResultado"
-    );
+    document.getElementById("dilatacaoRelativaResultado");
 
 const dilatacaoPercentualResultado =
-    document.getElementById(
-        "dilatacaoPercentualResultado"
-    );
+    document.getElementById("dilatacaoPercentualResultado");
 
 const deltaLResultado =
     document.getElementById("deltaLResultado");
 
 const comprimentoFinalResultado =
-    document.getElementById(
-        "comprimentoFinalResultado"
-    );
+    document.getElementById("comprimentoFinalResultado");
 
 const equacao =
     document.getElementById("equacao");
 
+const alerta =
+    document.getElementById("alerta");
+
 
 // ============================================================
-// FUNÇÃO — DILATAÇÃO RELATIVA
+// FORMATAÇÃO DE NÚMEROS
 // ============================================================
+
+function formatarNumero(valor, casas = 6) {
+
+    if (!Number.isFinite(valor)) {
+        return "—";
+    }
+
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: casas
+    });
+}
+
+
+// ============================================================
+// DILATAÇÃO RELATIVA
 //
-// ε(T) =
-// B0 × 10⁻³ +
-// B1 × 10⁻⁶ × T +
-// B2 × 10⁻⁹ × T²
-//
+// ε(T) = B0 × 10⁻³
+//      + B1 × 10⁻⁶ T
+//      + B2 × 10⁻⁹ T²
 // ============================================================
 
 function calcularDilatacaoRelativa(material, T) {
 
-    const B0 = material.B0;
-    const B1 = material.B1;
-    const B2 = material.B2;
-
     return (
-        B0 * 1e-3 +
-        B1 * 1e-6 * T +
-        B2 * 1e-9 * T * T
+        material.B0 * 1e-3 +
+        material.B1 * 1e-6 * T +
+        material.B2 * 1e-9 * T * T
     );
 }
 
 
 // ============================================================
-// FUNÇÃO — FATOR DE COMPRIMENTO
-// ============================================================
-//
-// L(T) / L25 = 1 + ε(T)
-//
+// FATOR DE COMPRIMENTO
 // ============================================================
 
 function calcularFatorComprimento(material, T) {
 
-    return (
-        1 +
-        calcularDilatacaoRelativa(material, T)
-    );
+    return 1 +
+        calcularDilatacaoRelativa(material, T);
 }
 
 
 // ============================================================
-// FUNÇÃO — COMPRIMENTO NA TEMPERATURA T
-// ============================================================
+// COMPRIMENTO EM UMA TEMPERATURA
 //
-// O comprimento inicial fornecido pelo usuário é interpretado
-// como o comprimento na temperatura inicial Ti.
+// O comprimento inicial informado pelo usuário é o comprimento
+// na temperatura inicial Ti.
 //
-// Para obter L(T), usamos a razão:
-//
-// L(T) / L(Ti)
-//
+// L(T) = Li × [1 + ε(T)] / [1 + ε(Ti)]
 // ============================================================
 
 function calcularComprimentoNaTemperatura(
@@ -185,239 +149,187 @@ function calcularComprimentoNaTemperatura(
             temperatura
         );
 
-
-    return (
-        comprimentoInicial *
+    return comprimentoInicial *
         fatorTemperatura /
-        fatorInicial
-    );
+        fatorInicial;
 }
 
 
 // ============================================================
-// FUNÇÃO — COEFICIENTE DE EXPANSÃO LINEAR
-// ============================================================
+// COEFICIENTE DE EXPANSÃO LINEAR
 //
 // α(T) = (1/L) × dL/dT
 //
-// Como:
-//
-// L(T) / L25 =
-// 1 + B0×10⁻³ +
-// B1×10⁻⁶T +
-// B2×10⁻⁹T²
-//
-// temos:
-//
-// α(T) =
-//
-// [B1×10⁻⁶ + 2B2×10⁻⁹T]
-// ----------------------------------------------
-// [1 + B0×10⁻³ +
-//      B1×10⁻⁶T +
-//      B2×10⁻⁹T²]
-//
-// Resultado: K⁻¹
-//
+// Resultado interno em K⁻¹
 // ============================================================
 
 function calcularCoeficienteLinear(material, T) {
 
-    const B0 = material.B0;
-    const B1 = material.B1;
-    const B2 = material.B2;
-
-
     const numerador =
-        B1 * 1e-6 +
-        2 * B2 * 1e-9 * T;
-
+        material.B1 * 1e-6 +
+        2 * material.B2 * 1e-9 * T;
 
     const denominador =
         1 +
-        B0 * 1e-3 +
-        B1 * 1e-6 * T +
-        B2 * 1e-9 * T * T;
-
+        material.B0 * 1e-3 +
+        material.B1 * 1e-6 * T +
+        material.B2 * 1e-9 * T * T;
 
     return numerador / denominador;
 }
 
 
 // ============================================================
-// FUNÇÃO — TEMPERATURA MÉDIA
-// ============================================================
-//
-// Usada para apresentar um único α representativo
-// do intervalo Ti → Tf.
-//
+// PREENCHER LISTA DE MATERIAIS
 // ============================================================
 
-function calcularTemperaturaMedia(Ti, Tf) {
+function preencherMateriais() {
 
-    return (Ti + Tf) / 2;
+    materialSelect.innerHTML = "";
+
+    for (const id in materiais) {
+
+        const material =
+            materiais[id];
+
+        const option =
+            document.createElement("option");
+
+        option.value = id;
+
+        option.textContent =
+            `${material.nome} (${material.simbolo})`;
+
+        materialSelect.appendChild(option);
+    }
+
+    atualizarDadosMaterial();
 }
 
 
 // ============================================================
-// FUNÇÃO — FORMATAR NÚMERO
+// ATUALIZAR DADOS DO MATERIAL
 // ============================================================
 
-function formatarNumero(
-    valor,
-    casas = 6
-) {
+function atualizarDadosMaterial() {
 
-    return valor.toLocaleString(
-        "pt-BR",
-        {
-            minimumFractionDigits: casas,
-            maximumFractionDigits: casas
-        }
-    );
-}
-
-
-// ============================================================
-// FUNÇÃO — NOTAÇÃO CIENTÍFICA
-// ============================================================
-
-function formatarCientifico(
-    valor,
-    casas = 4
-) {
-
-    return valor.toExponential(casas);
-}
-
-
-// ============================================================
-// FUNÇÃO — OBTER MATERIAL
-// ============================================================
-
-function obterMaterialSelecionado() {
-
-    const chave =
+    const id =
         materialSelect.value;
 
-    return materiais[chave];
+    const material =
+        materiais[id];
+
+    if (!material) {
+        return;
+    }
+
+    referenciaMaterial.textContent =
+        material.referencia || "Papadakis (1972)";
+
+    tminMaterial.textContent =
+        `${material.Tmin} °C`;
+
+    tmaxMaterial.textContent =
+        `${material.Tmax} °C`;
+
+    rhoMaterial.textContent =
+        material.rho !== undefined
+            ? `${material.rho} g/cm³`
+            : "—";
+
+    b0Material.textContent =
+        material.B0;
+
+    b1Material.textContent =
+        material.B1;
+
+    b2Material.textContent =
+        material.B2;
+
+    // --------------------------------------------------------
+    // Limites de temperatura
+    // --------------------------------------------------------
+
+    temperaturaInicialInput.min =
+        material.Tmin;
+
+    temperaturaFinalInput.min =
+        material.Tmin;
+
+    temperaturaInicialInput.max =
+        material.Tmax;
+
+    temperaturaFinalInput.max =
+        material.Tmax;
 }
 
 
 // ============================================================
-// FUNÇÃO — VERIFICAR INTERVALO DE TEMPERATURA
+// VALIDAR TEMPERATURAS
 // ============================================================
 
-function verificarTemperaturas(
+function validarTemperaturas(
     material,
     Ti,
     Tf
 ) {
 
-    if (
-        Ti < material.Tmin ||
-        Ti > material.Tmax
-    ) {
-
-        return {
-            valido: false,
-            mensagem:
-                `A temperatura inicial (${Ti} °C) ` +
-                `está fora da faixa de validade ` +
-                `do modelo para ${material.nome}. ` +
-                `Faixa: ${material.Tmin} °C a ` +
-                `${material.Tmax} °C.`
-        };
-    }
-
-
-    if (
-        Tf < material.Tmin ||
-        Tf > material.Tmax
-    ) {
-
-        return {
-            valido: false,
-            mensagem:
-                `A temperatura final (${Tf} °C) ` +
-                `está fora da faixa de validade ` +
-                `do modelo para ${material.nome}. ` +
-                `Faixa: ${material.Tmin} °C a ` +
-                `${material.Tmax} °C.`
-        };
-    }
-
-
-    return {
-        valido: true,
-        mensagem: ""
-    };
-}
-
-
-// ============================================================
-// FUNÇÃO — MOSTRAR ALERTA
-// ============================================================
-
-function mostrarAlerta(texto) {
-
-    alerta.textContent = texto;
-
-    alerta.hidden = false;
-}
-
-
-// ============================================================
-// FUNÇÃO — ESCONDER ALERTA
-// ============================================================
-
-function esconderAlerta() {
-
-    alerta.textContent = "";
-
     alerta.hidden = true;
+    alerta.innerHTML = "";
+
+    let valido = true;
+
+    if (Ti < material.Tmin || Ti > material.Tmax) {
+
+        alerta.hidden = false;
+
+        alerta.innerHTML += `
+            <strong>Temperatura inicial fora da faixa.</strong>
+            <br>
+            Para ${material.nome}, o intervalo informado por
+            Papadakis é de ${material.Tmin} °C a
+            ${material.Tmax} °C.
+        `;
+
+        valido = false;
+    }
+
+    if (Tf < material.Tmin || Tf > material.Tmax) {
+
+        alerta.hidden = false;
+
+        alerta.innerHTML += `
+            <br><br>
+            <strong>Temperatura final fora da faixa.</strong>
+            <br>
+            Para ${material.nome}, o intervalo informado por
+            Papadakis é de ${material.Tmin} °C a
+            ${material.Tmax} °C.
+        `;
+
+        valido = false;
+    }
+
+    return valido;
 }
 
 
 // ============================================================
-// FUNÇÃO — MOSTRAR ERRO
-// ============================================================
-
-function mostrarErro(texto) {
-
-    mensagem.innerHTML = `
-        <p>
-            <strong>${texto}</strong>
-        </p>
-    `;
-
-    resultadoCalculo.hidden = true;
-
-    equacao.hidden = true;
-}
-
-
-// ============================================================
-// FUNÇÃO PRINCIPAL — CALCULAR
+// CALCULAR SIMULAÇÃO
 // ============================================================
 
 function calcular() {
 
-    esconderAlerta();
-
-
-    // --------------------------------------------------------
-    // MATERIAL
-    // --------------------------------------------------------
+    const id =
+        materialSelect.value;
 
     const material =
-        obterMaterialSelecionado();
-
+        materiais[id];
 
     if (!material) {
 
-        mostrarErro(
-            "Selecione um material."
+        console.error(
+            "Material não encontrado."
         );
 
         return;
@@ -425,7 +337,7 @@ function calcular() {
 
 
     // --------------------------------------------------------
-    // COMPRIMENTO INICIAL
+    // ENTRADAS
     // --------------------------------------------------------
 
     const comprimentoInicial =
@@ -433,43 +345,10 @@ function calcular() {
             comprimentoInicialInput.value
         );
 
-
-    if (
-        isNaN(comprimentoInicial) ||
-        comprimentoInicial <= 0
-    ) {
-
-        mostrarErro(
-            "Digite um comprimento inicial maior que zero."
-        );
-
-        return;
-    }
-
-
-    // --------------------------------------------------------
-    // TEMPERATURA INICIAL
-    // --------------------------------------------------------
-
     const Ti =
         parseFloat(
             temperaturaInicialInput.value
         );
-
-
-    if (isNaN(Ti)) {
-
-        mostrarErro(
-            "Digite uma temperatura inicial válida."
-        );
-
-        return;
-    }
-
-
-    // --------------------------------------------------------
-    // TEMPERATURA FINAL
-    // --------------------------------------------------------
 
     const Tf =
         parseFloat(
@@ -477,68 +356,66 @@ function calcular() {
         );
 
 
-    if (isNaN(Tf)) {
+    // --------------------------------------------------------
+    // VALIDAÇÃO DOS VALORES
+    // --------------------------------------------------------
 
-        mostrarErro(
-            "Digite uma temperatura final válida."
-        );
+    if (
+        !Number.isFinite(comprimentoInicial) ||
+        comprimentoInicial <= 0
+    ) {
+
+        alerta.hidden = false;
+
+        alerta.innerHTML = `
+            <strong>Comprimento inválido.</strong>
+            Informe um comprimento maior que zero.
+        `;
+
+        return;
+    }
+
+
+    if (
+        !Number.isFinite(Ti) ||
+        !Number.isFinite(Tf)
+    ) {
+
+        alerta.hidden = false;
+
+        alerta.innerHTML = `
+            <strong>Temperatura inválida.</strong>
+            Informe valores numéricos para as temperaturas.
+        `;
 
         return;
     }
 
 
     // --------------------------------------------------------
-    // VERIFICAR TEMPERATURAS
+    // VALIDAR FAIXA DO MATERIAL
     // --------------------------------------------------------
 
-    const verificacao =
-        verificarTemperaturas(
-            material,
-            Ti,
-            Tf
-        );
+    if (!validarTemperaturas(material, Ti, Tf)) {
 
-
-    if (!verificacao.valido) {
-
-        mostrarErro(
-            verificacao.mensagem
-        );
+        resultadoCalculo.hidden = true;
+        equacao.hidden = true;
 
         return;
     }
 
 
-    // ========================================================
-    // CÁLCULOS
-    // ========================================================
-
-
-    // Variação de temperatura
+    // --------------------------------------------------------
+    // VARIAÇÃO DE TEMPERATURA
+    // --------------------------------------------------------
 
     const deltaT =
         Tf - Ti;
 
 
-    // Dilatação relativa na temperatura inicial
-
-    const epsilonInicial =
-        calcularDilatacaoRelativa(
-            material,
-            Ti
-        );
-
-
-    // Dilatação relativa na temperatura final
-
-    const epsilonFinal =
-        calcularDilatacaoRelativa(
-            material,
-            Tf
-        );
-
-
-    // Comprimento final
+    // --------------------------------------------------------
+    // COMPRIMENTOS
+    // --------------------------------------------------------
 
     const comprimentoFinal =
         calcularComprimentoNaTemperatura(
@@ -549,45 +426,48 @@ function calcular() {
         );
 
 
-    // Variação de comprimento
-
     const deltaL =
         comprimentoFinal -
         comprimentoInicial;
 
 
-    // Dilatação relativa entre Ti e Tf
+    // --------------------------------------------------------
+    // DILATAÇÃO RELATIVA
+    // --------------------------------------------------------
 
     const dilatacaoRelativa =
-        (
-            comprimentoFinal -
-            comprimentoInicial
-        ) /
+        deltaL /
         comprimentoInicial;
 
-
-    // Dilatação percentual
 
     const dilatacaoPercentual =
         dilatacaoRelativa * 100;
 
 
-    // Temperatura média
+    // --------------------------------------------------------
+    // COEFICIENTE α
+    //
+    // Como α depende da temperatura, usamos a temperatura
+    // média do intervalo para representar o resultado.
+    // --------------------------------------------------------
 
     const temperaturaMedia =
-        calcularTemperaturaMedia(
-            Ti,
-            Tf
-        );
+        (Ti + Tf) / 2;
 
-
-    // Coeficiente linear na temperatura média
 
     const alpha =
         calcularCoeficienteLinear(
             material,
             temperaturaMedia
         );
+
+
+    // Conversão SOMENTE para apresentação:
+    //
+    // K⁻¹ → ×10⁻⁶ K⁻¹
+
+    const alphaMicro =
+        alpha * 1e6;
 
 
     // ========================================================
@@ -606,9 +486,8 @@ function calcular() {
     // α
     // --------------------------------------------------------
 
-    const alphaMicro = alpha * 1e6;
-
-    alphaResultado.textContent = `${formatarNumero(alphaMicro, 4)} × 10⁻⁶`;
+    alphaResultado.textContent =
+        `${formatarNumero(alphaMicro, 4)} × 10⁻⁶`;
 
 
     // --------------------------------------------------------
@@ -624,9 +503,7 @@ function calcular() {
     // --------------------------------------------------------
 
     dilatacaoRelativaResultado.textContent =
-        formatarCientifico(
-            dilatacaoRelativa
-        );
+        dilatacaoRelativa.toExponential(4);
 
 
     // --------------------------------------------------------
@@ -668,420 +545,64 @@ function calcular() {
 
     resultadoCalculo.hidden = false;
 
-    // --------------------------------------------------------
-    // DESENHAR GRÁFICO
-    // --------------------------------------------------------
-    
-    desenharGrafico(
-        material,
-        comprimentoInicial,
-        temperaturaInicial,
-        temperaturaFinal
-    );
-    
     equacao.hidden = false;
 
 
-    // ========================================================
-    // ALERTA PARA TRANSFORMAÇÕES / LIMITES
-    // ========================================================
+    // --------------------------------------------------------
+    // DESENHAR GRÁFICO
+    // --------------------------------------------------------
 
-    if (material.condicao) {
-
-        mostrarAlerta(
-            `Observação: ${material.condicao}.`
-        );
-    }
-
-
-    // ========================================================
-    // DEBUG NO CONSOLE
-    // ========================================================
-
-    console.log(
-        "=========================================="
-    );
-
-    console.log(
-        "SIMULADOR DE DILATAÇÃO TÉRMICA"
-    );
-
-    console.log(
-        "=========================================="
-    );
-
-    console.log(
-        "Material:",
-        material.nome
-    );
-
-    console.log(
-        "Ti:",
+    desenharGrafico(
+        material,
+        comprimentoInicial,
         Ti,
-        "°C"
-    );
-
-    console.log(
-        "Tf:",
-        Tf,
-        "°C"
-    );
-
-    console.log(
-        "ΔT:",
-        deltaT,
-        "K"
-    );
-
-    console.log(
-        "Temperatura média:",
-        temperaturaMedia,
-        "°C"
-    );
-
-    console.log(
-        "B0:",
-        material.B0
-    );
-
-    console.log(
-        "B1:",
-        material.B1
-    );
-
-    console.log(
-        "B2:",
-        material.B2
-    );
-
-    console.log(
-        "α(Tm):",
-        alpha,
-        "K⁻¹"
-    );
-
-    console.log(
-        "Dilatação relativa:",
-        dilatacaoRelativa
-    );
-
-    console.log(
-        "ΔL:",
-        deltaL,
-        "m"
-    );
-
-    console.log(
-        "L final:",
-        comprimentoFinal,
-        "m"
-    );
-
-    console.log(
-        "=========================================="
+        Tf
     );
 }
 
 
 // ============================================================
-// PREENCHER SELECT DE MATERIAIS
+// GRÁFICO DE DILATAÇÃO
 // ============================================================
 
-function carregarMateriais() {
-
-    materialSelect.innerHTML = "";
-
-
-    Object.keys(materiais).forEach(
-        function(chave) {
-
-            const material =
-                materiais[chave];
-
-
-            const option =
-                document.createElement("option");
-
-
-            option.value = chave;
-
-            option.textContent =
-                `${material.nome} (${material.simbolo})`;
-
-
-            materialSelect.appendChild(option);
-
-        }
-    );
-}
-
-
-// ============================================================
-// ATUALIZAR INFORMAÇÕES DO MATERIAL
-// ============================================================
-
-function atualizarInformacoesMaterial() {
-
-    const material =
-        obterMaterialSelecionado();
-
-
-    if (!material) {
-        return;
-    }
-
-
-    // --------------------------------------------------------
-    // Dados gerais
-    // --------------------------------------------------------
-
-    referenciaMaterial.textContent =
-        material.referencia || "Papadakis (1972)";
-
-
-    tminMaterial.textContent =
-        `${material.Tmin} °C`;
-
-
-    tmaxMaterial.textContent =
-        `${material.Tmax} °C`;
-
-
-    rhoMaterial.textContent =
-        `${material.rho} g/cm³`;
-
-
-    // --------------------------------------------------------
-    // Coeficientes
-    // --------------------------------------------------------
-
-    b0Material.textContent =
-        material.B0;
-
-
-    b1Material.textContent =
-        material.B1;
-
-
-    b2Material.textContent =
-        material.B2;
-
-
-    // --------------------------------------------------------
-    // Limites dos campos de temperatura
-    // --------------------------------------------------------
-
-    temperaturaInicialInput.min =
-        material.Tmin;
-
-    temperaturaInicialInput.max =
-        material.Tmax;
-
-
-    temperaturaFinalInput.min =
-        material.Tmin;
-
-    temperaturaFinalInput.max =
-        material.Tmax;
-
-
-    // --------------------------------------------------------
-    // Ajustar temperaturas se necessário
-    // --------------------------------------------------------
-
-    const Ti =
-        parseFloat(
-            temperaturaInicialInput.value
-        );
-
-
-    const Tf =
-        parseFloat(
-            temperaturaFinalInput.value
-        );
-
-
-    if (
-        Ti < material.Tmin ||
-        Ti > material.Tmax
-    ) {
-
-        temperaturaInicialInput.value =
-            material.Tmin;
-    }
-
-
-    if (
-        Tf < material.Tmin ||
-        Tf > material.Tmax
-    ) {
-
-        temperaturaFinalInput.value =
-            material.Tmin;
-    }
-
-
-    // --------------------------------------------------------
-    // Limpar resultado anterior
-    // --------------------------------------------------------
-
-    resultadoCalculo.hidden = true;
-
-    equacao.hidden = true;
-
-    esconderAlerta();
-
-
-    mensagem.innerHTML = `
-        <p>
-            Configure os valores e clique em
-            <strong>Calcular</strong>.
-        </p>
-    `;
-}
-
-
-// ============================================================
-// EVENTO — BOTÃO CALCULAR
-// ============================================================
-
-calcularBtn.addEventListener(
-    "click",
-    calcular
-);
-
-
-// ============================================================
-// EVENTO — MUDANÇA DE MATERIAL
-// ============================================================
-
-materialSelect.addEventListener(
-    "change",
-    atualizarInformacoesMaterial
-);
-
-
-// ============================================================
-// ENTER — COMPRIMENTO
-// ============================================================
-
-comprimentoInicialInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            calcular();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// ENTER — TEMPERATURA INICIAL
-// ============================================================
-
-temperaturaInicialInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            calcular();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// ENTER — TEMPERATURA FINAL
-// ============================================================
-
-temperaturaFinalInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            calcular();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// INICIALIZAÇÃO
-// ============================================================
-
-carregarMateriais();
-
-atualizarInformacoesMaterial();
-
-
-// ============================================================
-// FUNÇÃO — DESENHAR GRÁFICO DE DILATAÇÃO
-// ============================================================
-
-// --------------------------------------------------------
-// MOSTRAR RESULTADOS
-// --------------------------------------------------------
-
-resultadoCalculo.hidden = false;
-
-desenharGrafico(
+function desenharGrafico(
     material,
     comprimentoInicial,
     Ti,
     Tf
-);
-
-equacao.hidden = false; {
+) {
 
     const canvas =
-        document.getElementById("graficoDilatacao");
+        document.getElementById(
+            "graficoDilatacao"
+        );
 
     if (!canvas) {
-        console.error("Canvas do gráfico não encontrado.");
+
+        console.error(
+            "Canvas do gráfico não encontrado."
+        );
+
         return;
     }
 
-    const ctx = canvas.getContext("2d");
+
+    const ctx =
+        canvas.getContext("2d");
+
 
     if (!ctx) {
-        console.error("Não foi possível obter o contexto 2D.");
-        return;
-    }
 
-    // ========================================================
-    // CONVERTER ENTRADAS PARA NÚMEROS
-    // ========================================================
-
-    const L0 = parseFloat(comprimentoInicial);
-    const Ti = parseFloat(temperaturaInicial);
-    const Tf = parseFloat(temperaturaFinal);
-
-    if (
-        !Number.isFinite(L0) ||
-        !Number.isFinite(Ti) ||
-        !Number.isFinite(Tf)
-    ) {
-        console.error("Valores inválidos:", {
-            L0,
-            Ti,
-            Tf
-        });
+        console.error(
+            "Contexto 2D não disponível."
+        );
 
         return;
     }
 
+
     // ========================================================
-    // TAMANHO DO GRÁFICO
+    // DIMENSÕES
     // ========================================================
 
     const container =
@@ -1093,23 +614,27 @@ equacao.hidden = false; {
     const altura =
         container.clientHeight - 20;
 
-    if (largura <= 0 || altura <= 0) {
+
+    if (
+        largura <= 0 ||
+        altura <= 0
+    ) {
 
         console.error(
-            "Dimensões inválidas do gráfico:",
-            largura,
-            altura
+            "Dimensões inválidas do canvas."
         );
 
         return;
     }
 
+
     // ========================================================
-    // RESOLUÇÃO DO CANVAS
+    // RESOLUÇÃO
     // ========================================================
 
     const dpr =
         window.devicePixelRatio || 1;
+
 
     canvas.width =
         largura * dpr;
@@ -1123,6 +648,7 @@ equacao.hidden = false; {
     canvas.style.height =
         `${altura}px`;
 
+
     ctx.setTransform(
         dpr,
         0,
@@ -1132,8 +658,9 @@ equacao.hidden = false; {
         0
     );
 
+
     // ========================================================
-    // ÁREA DO GRÁFICO
+    // MARGENS
     // ========================================================
 
     const margemEsquerda = 80;
@@ -1141,15 +668,18 @@ equacao.hidden = false; {
     const margemSuperior = 30;
     const margemInferior = 65;
 
+
     const larguraGrafico =
         largura -
         margemEsquerda -
         margemDireita;
 
+
     const alturaGrafico =
         altura -
         margemSuperior -
         margemInferior;
+
 
     // ========================================================
     // GERAR PONTOS
@@ -1160,22 +690,30 @@ equacao.hidden = false; {
     const temperaturas = [];
     const comprimentos = [];
 
-    for (let i = 0; i <= numeroPontos; i++) {
+
+    for (
+        let i = 0;
+        i <= numeroPontos;
+        i++
+    ) {
 
         const fracao =
             i / numeroPontos;
+
 
         const T =
             Ti +
             (Tf - Ti) * fracao;
 
+
         const L =
             calcularComprimentoNaTemperatura(
                 material,
-                L0,
+                comprimentoInicial,
                 Ti,
                 T
             );
+
 
         if (
             Number.isFinite(T) &&
@@ -1187,14 +725,18 @@ equacao.hidden = false; {
         }
     }
 
-    if (temperaturas.length < 2) {
+
+    if (
+        temperaturas.length < 2
+    ) {
 
         console.error(
-            "Não foram gerados pontos suficientes para o gráfico."
+            "Pontos insuficientes para desenhar o gráfico."
         );
 
         return;
     }
+
 
     // ========================================================
     // LIMITES
@@ -1212,14 +754,13 @@ equacao.hidden = false; {
     const Lmax =
         Math.max(...comprimentos);
 
-    // ========================================================
-    // MARGEM DO EIXO Y
-    // ========================================================
 
     const variacaoL =
         Lmax - Lmin;
 
+
     let margemL;
+
 
     if (variacaoL > 0) {
 
@@ -1236,14 +777,16 @@ equacao.hidden = false; {
         }
     }
 
+
     const eixoYMin =
         Lmin - margemL;
 
     const eixoYMax =
         Lmax + margemL;
 
+
     // ========================================================
-    // LIMPAR GRÁFICO
+    // LIMPAR
     // ========================================================
 
     ctx.clearRect(
@@ -1252,6 +795,7 @@ equacao.hidden = false; {
         largura,
         altura
     );
+
 
     // ========================================================
     // FUNDO
@@ -1267,13 +811,15 @@ equacao.hidden = false; {
         altura
     );
 
+
     // ========================================================
-    // CONVERTER TEMPERATURA → X
+    // COORDENADAS
     // ========================================================
 
-    function xTemperatura(T) {
+    function converterX(T) {
 
         if (Tmax === Tmin) {
+
             return margemEsquerda +
                 larguraGrafico / 2;
         }
@@ -1286,13 +832,11 @@ equacao.hidden = false; {
             larguraGrafico;
     }
 
-    // ========================================================
-    // CONVERTER COMPRIMENTO → Y
-    // ========================================================
 
-    function yComprimento(L) {
+    function converterY(L) {
 
         if (eixoYMax === eixoYMin) {
+
             return margemSuperior +
                 alturaGrafico / 2;
         }
@@ -1304,6 +848,7 @@ equacao.hidden = false; {
             ) *
             alturaGrafico;
     }
+
 
     // ========================================================
     // GRADE HORIZONTAL
@@ -1320,6 +865,7 @@ equacao.hidden = false; {
     ctx.textBaseline =
         "middle";
 
+
     for (
         let i = 0;
         i <= numeroLinhas;
@@ -1329,20 +875,23 @@ equacao.hidden = false; {
         const fracao =
             i / numeroLinhas;
 
+
         const y =
             margemSuperior +
             fracao * alturaGrafico;
+
 
         const valor =
             eixoYMax -
             fracao *
             (eixoYMax - eixoYMin);
 
-        // Linha da grade
+
         ctx.strokeStyle =
             "#dbe3ec";
 
         ctx.lineWidth = 1;
+
 
         ctx.beginPath();
 
@@ -1359,9 +908,10 @@ equacao.hidden = false; {
 
         ctx.stroke();
 
-        // Valor do eixo
+
         ctx.fillStyle =
             "#64748b";
+
 
         ctx.fillText(
             formatarNumero(valor, 6),
@@ -1369,6 +919,7 @@ equacao.hidden = false; {
             y
         );
     }
+
 
     // ========================================================
     // GRADE VERTICAL
@@ -1382,6 +933,7 @@ equacao.hidden = false; {
     ctx.textBaseline =
         "top";
 
+
     for (
         let i = 0;
         i <= numeroColunas;
@@ -1391,20 +943,23 @@ equacao.hidden = false; {
         const fracao =
             i / numeroColunas;
 
+
         const x =
             margemEsquerda +
             fracao * larguraGrafico;
+
 
         const valor =
             Tmin +
             fracao *
             (Tmax - Tmin);
 
-        // Linha
+
         ctx.strokeStyle =
             "#dbe3ec";
 
         ctx.lineWidth = 1;
+
 
         ctx.beginPath();
 
@@ -1421,9 +976,10 @@ equacao.hidden = false; {
 
         ctx.stroke();
 
-        // Temperatura
+
         ctx.fillStyle =
             "#64748b";
+
 
         ctx.fillText(
             `${formatarNumero(valor, 1)} °C`,
@@ -1434,6 +990,7 @@ equacao.hidden = false; {
         );
     }
 
+
     // ========================================================
     // EIXOS
     // ========================================================
@@ -1443,9 +1000,12 @@ equacao.hidden = false; {
 
     ctx.lineWidth = 1.5;
 
+
     ctx.beginPath();
 
-    // eixo Y
+
+    // Eixo Y
+
     ctx.moveTo(
         margemEsquerda,
         margemSuperior
@@ -1457,7 +1017,9 @@ equacao.hidden = false; {
         alturaGrafico
     );
 
-    // eixo X
+
+    // Eixo X
+
     ctx.lineTo(
         margemEsquerda +
         larguraGrafico,
@@ -1465,7 +1027,9 @@ equacao.hidden = false; {
         alturaGrafico
     );
 
+
     ctx.stroke();
+
 
     // ========================================================
     // CURVA
@@ -1482,83 +1046,96 @@ equacao.hidden = false; {
     ctx.lineCap =
         "round";
 
+
     ctx.beginPath();
 
-    temperaturas.forEach(
-        (T, indice) => {
 
-            const x =
-                xTemperatura(T);
+    for (
+        let i = 0;
+        i < temperaturas.length;
+        i++
+    ) {
 
-            const y =
-                yComprimento(
-                    comprimentos[indice]
-                );
+        const x =
+            converterX(
+                temperaturas[i]
+            );
 
-            if (indice === 0) {
 
-                ctx.moveTo(
-                    x,
-                    y
-                );
+        const y =
+            converterY(
+                comprimentos[i]
+            );
 
-            } else {
 
-                ctx.lineTo(
-                    x,
-                    y
-                );
-            }
+        if (i === 0) {
+
+            ctx.moveTo(
+                x,
+                y
+            );
+
+        } else {
+
+            ctx.lineTo(
+                x,
+                y
+            );
         }
-    );
+    }
+
 
     ctx.stroke();
+
 
     // ========================================================
     // PONTOS INICIAL E FINAL
     // ========================================================
 
-    const indices =
-        [
-            0,
-            temperaturas.length - 1
-        ];
+    const indices = [
+        0,
+        temperaturas.length - 1
+    ];
+
 
     ctx.fillStyle =
         "#2563eb";
 
-    indices.forEach(
-        indice => {
 
-            const x =
-                xTemperatura(
-                    temperaturas[indice]
-                );
+    for (const indice of indices) {
 
-            const y =
-                yComprimento(
-                    comprimentos[indice]
-                );
-
-            ctx.beginPath();
-
-            ctx.arc(
-                x,
-                y,
-                5,
-                0,
-                2 * Math.PI
+        const x =
+            converterX(
+                temperaturas[indice]
             );
 
-            ctx.fill();
-        }
-    );
+
+        const y =
+            converterY(
+                comprimentos[indice]
+            );
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            5,
+            0,
+            2 * Math.PI
+        );
+
+        ctx.fill();
+    }
+
 
     // ========================================================
-    // EIXO Y — TÍTULO
+    // TÍTULO DO EIXO Y
     // ========================================================
 
     ctx.save();
+
 
     ctx.translate(
         20,
@@ -1566,9 +1143,11 @@ equacao.hidden = false; {
         alturaGrafico / 2
     );
 
+
     ctx.rotate(
         -Math.PI / 2
     );
+
 
     ctx.fillStyle =
         "#334155";
@@ -1581,6 +1160,7 @@ equacao.hidden = false; {
 
     ctx.textBaseline =
         "middle";
+
 
     ctx.fillText(
         "Comprimento (m)",
@@ -1588,10 +1168,12 @@ equacao.hidden = false; {
         0
     );
 
+
     ctx.restore();
 
+
     // ========================================================
-    // EIXO X — TÍTULO
+    // TÍTULO DO EIXO X
     // ========================================================
 
     ctx.fillStyle =
@@ -1605,6 +1187,7 @@ equacao.hidden = false; {
 
     ctx.textBaseline =
         "middle";
+
 
     ctx.fillText(
         "Temperatura (°C)",
@@ -1613,19 +1196,43 @@ equacao.hidden = false; {
         altura - 20
     );
 
+
     // ========================================================
     // DEBUG
     // ========================================================
 
     console.log(
-        "Gráfico desenhado:",
+        "Gráfico desenhado com sucesso.",
         {
             material: material.nome,
             pontos: temperaturas.length,
-            Tmin,
-            Tmax,
-            Lmin,
-            Lmax
+            Tmin: Tmin,
+            Tmax: Tmax,
+            Lmin: Lmin,
+            Lmax: Lmax
         }
     );
 }
+
+
+// ============================================================
+// EVENTOS
+// ============================================================
+
+materialSelect.addEventListener(
+    "change",
+    atualizarDadosMaterial
+);
+
+
+calcularButton.addEventListener(
+    "click",
+    calcular
+);
+
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+preencherMateriais();
