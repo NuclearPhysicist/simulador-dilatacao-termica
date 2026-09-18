@@ -353,6 +353,88 @@
 
 
 
+<!-- ==================================================
+     GRÁFICO
+     ================================================== -->
+
+<section class="grafico">
+
+    <h2>
+        Variação do comprimento com a temperatura
+    </h2>
+
+    <p class="descricao-grafico">
+
+        O gráfico compara o modelo escolar de
+        coeficiente de dilatação constante com o
+        modelo quadrático de Papadakis (1972).
+
+    </p>
+
+
+    <!-- LEGENDA -->
+
+    <div class="legenda-grafico">
+
+        <div class="legenda-item">
+
+            <span class="legenda-linha azul"></span>
+
+            <span>
+                Modelo escolar — α constante
+            </span>
+
+        </div>
+
+
+        <div class="legenda-item">
+
+            <span class="legenda-linha verde"></span>
+
+            <span>
+                Papadakis (1972) — modelo quadrático
+            </span>
+
+        </div>
+
+
+        <div class="legenda-item">
+
+            <span class="legenda-linha tracejada"></span>
+
+            <span>
+                Temperaturas Ti e Tf
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- CANVAS -->
+
+    <div class="grafico-container">
+
+        <canvas id="graficoDilatacao"></canvas>
+
+    </div>
+
+
+    <p class="observacao-grafico">
+
+        O eixo horizontal apresenta toda a faixa de
+        validade do modelo para o material selecionado
+        (<span id="faixaGrafico">—</span>).
+
+        As temperaturas Ti e Tf representam apenas
+        o intervalo utilizado no cálculo.
+
+    </p>
+
+</section>
+
+        
+
         <!-- ==================================================
              COMPARAÇÃO DOS DOIS MODELOS
              ================================================== -->
@@ -573,94 +655,6 @@
             hidden
         >
         </div>
-
-    </section>
-
-
-
-    <!-- ==================================================
-         GRÁFICO
-         ================================================== -->
-
-    <section class="grafico">
-
-        <h2>
-            Variação do comprimento com a temperatura
-        </h2>
-
-
-        <p class="descricao-grafico">
-
-            O gráfico compara o modelo escolar de
-            coeficiente de dilatação constante com o
-            modelo quadrático de Papadakis (1972).
-
-        </p>
-
-
-
-        <!-- LEGENDA -->
-
-        <div class="legenda-grafico">
-
-
-            <div class="legenda-item">
-
-                <span class="legenda-linha azul"></span>
-
-                <span>
-                    Modelo escolar — α constante
-                </span>
-
-            </div>
-
-
-            <div class="legenda-item">
-
-                <span class="legenda-linha verde"></span>
-
-                <span>
-                    Papadakis (1972) — modelo quadrático
-                </span>
-
-            </div>
-
-
-            <div class="legenda-item">
-
-                <span class="legenda-linha tracejada"></span>
-
-                <span>
-                    Temperaturas Ti e Tf
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- CANVAS -->
-
-        <div class="grafico-container">
-
-            <canvas id="graficoDilatacao"></canvas>
-
-        </div>
-
-
-
-        <p class="observacao-grafico">
-
-            O eixo horizontal apresenta toda a faixa de
-            validade do modelo para o material selecionado
-            (<span id="faixaGrafico">—</span>).
-
-            As temperaturas Ti e Tf representam apenas
-            o intervalo utilizado no cálculo.
-
-        </p>
 
     </section>
 
