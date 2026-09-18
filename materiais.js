@@ -6,10 +6,10 @@
 // segundo Papadakis (1972)
 //
 // (L - L25) / L25 = B0 × 10⁻³
-//                 + B1 × 10⁻⁶ × T
-//                 + B2 × 10⁻⁹ × T²
+//                  + B1 × 10⁻⁶ × T
+//                  + B2 × 10⁻⁹ × T²
 //
-// T  = temperatura em °C
+// T = temperatura em °C
 // L25 = comprimento na temperatura de referência de 25 °C
 //
 // Tmin = 25 °C
@@ -17,21 +17,9 @@
 //
 // rho = densidade em g/cm³
 //
-// Fonte:
-// Papadakis, E. P. (1972).
-// "Tabulation of the Coefficients of a Quadratic Function
-// for the Thermal Expansion of Various Alloys and Other
-// Engineering Materials."
-// Materials Science and Engineering, 10, 195–203.
-//
 // ============================================================
 
-
 const materiais = {
-
-    // ========================================================
-    // ALUMÍNIO
-    // ========================================================
 
     aluminio: {
         nome: "Alumínio",
@@ -43,13 +31,9 @@ const materiais = {
         rho: 2.71,
         Tmin: 25,
         Tmax: 595,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/aluminio.png"
     },
-
-
-    // ========================================================
-    // BERÍLIO
-    // ========================================================
 
     berilio: {
         nome: "Berílio",
@@ -61,13 +45,9 @@ const materiais = {
         rho: 1.86,
         Tmin: 25,
         Tmax: 1095,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/berilio.png"
     },
-
-
-    // ========================================================
-    // CÉRIO
-    // ========================================================
 
     cerio: {
         nome: "Cério",
@@ -79,13 +59,9 @@ const materiais = {
         rho: 6.77,
         Tmin: 25,
         Tmax: 725,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/cerio.png"
     },
-
-
-    // ========================================================
-    // CROMO
-    // ========================================================
 
     cromo: {
         nome: "Cromo",
@@ -97,13 +73,9 @@ const materiais = {
         rho: 7.16,
         Tmin: 25,
         Tmax: 1600,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/cromo.png"
     },
-
-
-    // ========================================================
-    // COBALTO
-    // ========================================================
 
     cobalto: {
         nome: "Cobalto",
@@ -116,13 +88,9 @@ const materiais = {
         rho: 8.90,
         Tmin: 25,
         Tmax: 400,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/cobalto.png"
     },
-
-
-    // ========================================================
-    // COBRE
-    // ========================================================
 
     cobre: {
         nome: "Cobre",
@@ -134,13 +102,9 @@ const materiais = {
         rho: 8.94,
         Tmin: 25,
         Tmax: 1000,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/cobre.png"
     },
-
-
-    // ========================================================
-    // DIAMANTE
-    // ========================================================
 
     diamante: {
         nome: "Diamante",
@@ -153,13 +117,9 @@ const materiais = {
         rho: 3.52,
         Tmin: 25,
         Tmax: 1425,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/diamante.png"
     },
-
-
-    // ========================================================
-    // DISPRÓSIO
-    // ========================================================
 
     disprosio: {
         nome: "Disprósio",
@@ -171,13 +131,9 @@ const materiais = {
         rho: 8.56,
         Tmin: 25,
         Tmax: 1000,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/disprosio.png"
     },
-
-
-    // ========================================================
-    // ÉRBIO
-    // ========================================================
 
     erbio: {
         nome: "Érbio",
@@ -189,13 +145,9 @@ const materiais = {
         rho: 9.06,
         Tmin: 25,
         Tmax: 900,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/erbio.png"
     },
-
-
-    // ========================================================
-    // GERMÂNIO
-    // ========================================================
 
     germanio: {
         nome: "Germânio",
@@ -207,13 +159,9 @@ const materiais = {
         rho: 5.32,
         Tmin: 25,
         Tmax: 260,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/germanio.png"
     },
-
-
-    // ========================================================
-    // OURO
-    // ========================================================
 
     ouro: {
         nome: "Ouro",
@@ -225,13 +173,9 @@ const materiais = {
         rho: 19.3,
         Tmin: 25,
         Tmax: 1000,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/ouro.png"
     },
-
-
-    // ========================================================
-    // HÁFNIO
-    // ========================================================
 
     hafnio: {
         nome: "Háfnio",
@@ -243,13 +187,9 @@ const materiais = {
         rho: 13.09,
         Tmin: 25,
         Tmax: 980,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/hafnio.png"
     },
-
-
-    // ========================================================
-    // FERRO
-    // ========================================================
 
     ferro: {
         nome: "Ferro",
@@ -262,13 +202,9 @@ const materiais = {
         rho: 7.874,
         Tmin: 25,
         Tmax: 780,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/ferro.png"
     },
-
-
-    // ========================================================
-    // LANTÂNIO
-    // ========================================================
 
     lantanio: {
         nome: "Lantânio",
@@ -281,13 +217,9 @@ const materiais = {
         rho: 6.16,
         Tmin: 25,
         Tmax: 300,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/lantanio.png"
     },
-
-
-    // ========================================================
-    // MAGNÉSIO
-    // ========================================================
 
     magnesio: {
         nome: "Magnésio",
@@ -299,13 +231,9 @@ const materiais = {
         rho: 1.74,
         Tmin: 25,
         Tmax: 500,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/magnesio.png"
     },
-
-
-    // ========================================================
-    // MANGANÊS
-    // ========================================================
 
     manganes: {
         nome: "Manganês",
@@ -317,13 +245,9 @@ const materiais = {
         rho: 7.40,
         Tmin: 25,
         Tmax: 800,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/manganes.png"
     },
-
-
-    // ========================================================
-    // MOLIBDÊNIO
-    // ========================================================
 
     molibdenio: {
         nome: "Molibdênio",
@@ -335,13 +259,9 @@ const materiais = {
         rho: 10.24,
         Tmin: 25,
         Tmax: 2600,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/molibdenio.png"
     },
-
-
-    // ========================================================
-    // NEODÍMIO
-    // ========================================================
 
     neodimio: {
         nome: "Neodímio",
@@ -353,13 +273,9 @@ const materiais = {
         rho: 7.00,
         Tmin: 25,
         Tmax: 900,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/neodimio.png"
     },
-
-
-    // ========================================================
-    // NÍQUEL
-    // ========================================================
 
     niquel: {
         nome: "Níquel",
@@ -371,13 +287,9 @@ const materiais = {
         rho: 8.90,
         Tmin: 25,
         Tmax: 1300,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/niquel.png"
     },
-
-
-    // ========================================================
-    // NIÓBIO
-    // ========================================================
 
     niobio: {
         nome: "Nióbio",
@@ -389,13 +301,9 @@ const materiais = {
         rho: 8.57,
         Tmin: 25,
         Tmax: 2200,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/niobio.png"
     },
-
-
-    // ========================================================
-    // PLATINA
-    // ========================================================
 
     platina: {
         nome: "Platina",
@@ -407,13 +315,9 @@ const materiais = {
         rho: 21.5,
         Tmin: 25,
         Tmax: 1700,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/platina.png"
     },
-
-
-    // ========================================================
-    // PRASEODÍMIO
-    // ========================================================
 
     praseodimio: {
         nome: "Praseodímio",
@@ -425,13 +329,9 @@ const materiais = {
         rho: 6.77,
         Tmin: 25,
         Tmax: 800,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/praseodimio.png"
     },
-
-
-    // ========================================================
-    // RÊNIO
-    // ========================================================
 
     renio: {
         nome: "Rênio",
@@ -443,13 +343,9 @@ const materiais = {
         rho: 20.53,
         Tmin: 25,
         Tmax: 2500,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/renio.png"
     },
-
-
-    // ========================================================
-    // SILÍCIO
-    // ========================================================
 
     silicio: {
         nome: "Silício",
@@ -461,13 +357,9 @@ const materiais = {
         rho: 2.33,
         Tmin: 25,
         Tmax: 1300,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/silicio.png"
     },
-
-
-    // ========================================================
-    // PRATA
-    // ========================================================
 
     prata: {
         nome: "Prata",
@@ -479,13 +371,9 @@ const materiais = {
         rho: 10.5,
         Tmin: 25,
         Tmax: 900,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/prata.png"
     },
-
-
-    // ========================================================
-    // TÂNTALO
-    // ========================================================
 
     tantalio: {
         nome: "Tântalo",
@@ -497,13 +385,9 @@ const materiais = {
         rho: 16.6,
         Tmin: 25,
         Tmax: 2925,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/tantalio.png"
     },
-
-
-    // ========================================================
-    // TÉRBIO
-    // ========================================================
 
     terbio: {
         nome: "Térbio",
@@ -515,13 +399,9 @@ const materiais = {
         rho: 8.25,
         Tmin: 25,
         Tmax: 925,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/terbio.png"
     },
-
-
-    // ========================================================
-    // TÓRIO
-    // ========================================================
 
     torio: {
         nome: "Tório",
@@ -533,13 +413,9 @@ const materiais = {
         rho: 11.7,
         Tmin: 25,
         Tmax: 1025,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/torio.png"
     },
-
-
-    // ========================================================
-    // TITÂNIO
-    // ========================================================
 
     titanio: {
         nome: "Titânio",
@@ -551,13 +427,9 @@ const materiais = {
         rho: 4.60,
         Tmin: 25,
         Tmax: 825,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/titanio.png"
     },
-
-
-    // ========================================================
-    // TUNGSTÊNIO
-    // ========================================================
 
     tungstenio: {
         nome: "Tungstênio",
@@ -569,13 +441,9 @@ const materiais = {
         rho: 19.3,
         Tmin: 25,
         Tmax: 2125,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/tungstenio.png"
     },
-
-
-    // ========================================================
-    // URÂNIO
-    // ========================================================
 
     uranio: {
         nome: "Urânio",
@@ -588,13 +456,9 @@ const materiais = {
         rho: 19.1,
         Tmin: 25,
         Tmax: 625,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/uranio.png"
     },
-
-
-    // ========================================================
-    // ITÉRBIO
-    // ========================================================
 
     iterbio: {
         nome: "Itérbio",
@@ -606,13 +470,9 @@ const materiais = {
         rho: 6.96,
         Tmin: 25,
         Tmax: 625,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/iterbio.png"
     },
-
-
-    // ========================================================
-    // ZIRCÔNIO
-    // ========================================================
 
     zirconio: {
         nome: "Zircônio",
@@ -625,7 +485,8 @@ const materiais = {
         rho: 6.50,
         Tmin: 25,
         Tmax: 725,
-        unidade: "K⁻¹"
+        unidade: "K⁻¹",
+        imagem: "assets/materiais/zirconio.png"
     }
 
 };
