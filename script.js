@@ -32,11 +32,6 @@
 // L(T) = Li F(T) / F(Ti)
 //
 // ============================================================
-//
-// A função α(T) é mantida no código para uma futura
-// demonstração da variação do coeficiente de dilatação.
-//
-// ============================================================
 
 
 // ============================================================
@@ -104,50 +99,54 @@ const alphaResultado =
 const deltaTResultado =
     document.getElementById("deltaTResultado");
 
-const dilatacaoRelativaEscolar =
+const dilatacaoRelativaEscolarEl =
     document.getElementById(
         "dilatacaoRelativaEscolar"
     );
 
-const dilatacaoRelativaPapadakis =
+const dilatacaoRelativaPapadakisEl =
     document.getElementById(
         "dilatacaoRelativaPapadakis"
     );
 
-const dilatacaoPercentualEscolar =
+const dilatacaoPercentualEscolarEl =
     document.getElementById(
         "dilatacaoPercentualEscolar"
     );
 
-const dilatacaoPercentualPapadakis =
+const dilatacaoPercentualPapadakisEl =
     document.getElementById(
         "dilatacaoPercentualPapadakis"
     );
 
-const deltaLEscolar =
-    document.getElementById("deltaLEscolar");
-
-const deltaLPapadakis =
-    document.getElementById("deltaLPapadakis");
-
-const comprimentoFinalEscolar =
+const comprimentoFinalEscolarEl =
     document.getElementById(
         "comprimentoFinalEscolar"
     );
 
-const comprimentoFinalPapadakis =
+const comprimentoFinalPapadakisEl =
     document.getElementById(
         "comprimentoFinalPapadakis"
     );
 
-const diferencaComprimento =
+const diferencaComprimentoEl =
     document.getElementById(
         "diferencaComprimento"
     );
 
-const diferencaPercentual =
+const diferencaComprimentoPercentualEl =
     document.getElementById(
-        "diferencaPercentual"
+        "diferencaComprimentoPercentual"
+    );
+
+const temperaturaFinalDiferencaEl =
+    document.getElementById(
+        "temperaturaFinalDiferenca"
+    );
+
+const diferencaCoeficientesEl =
+    document.getElementById(
+        "diferencaCoeficientes"
     );
 
 const equacao =
@@ -239,13 +238,12 @@ function calcularComprimentoPapadakis(
 
 
 // ============================================================
-// DERIVADA DO MODELO
+// COEFICIENTE INSTANTÂNEO DO MODELO DE PAPADAKIS
 // ============================================================
 //
 // α(T) = (1/L) × dL/dT
 //
 // α(T) =
-//
 // [B1×10⁻⁶ + 2B2×10⁻⁹T]
 // -----------------------------------
 // [1 + B0×10⁻³
@@ -253,13 +251,6 @@ function calcularComprimentoPapadakis(
 //    + B2×10⁻⁹T²]
 //
 // Resultado: K⁻¹
-//
-// IMPORTANTE:
-//
-// Esta função NÃO é um terceiro modelo de comprimento.
-//
-// Ela será utilizada para demonstrar futuramente que
-// o coeficiente de dilatação varia com a temperatura.
 //
 // ============================================================
 
@@ -292,8 +283,7 @@ function calcularCoeficienteLinear(
 //
 // O modelo escolar utiliza α em 25 °C.
 //
-// Esse valor é calculado pela derivada do modelo de Papadakis
-// em T = 25 °C e depois permanece constante.
+// Esse valor permanece constante durante todo o intervalo.
 //
 // ============================================================
 
@@ -489,9 +479,9 @@ function calcular() {
     esconderAlerta();
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // MATERIAL
-    // --------------------------------------------------------
+    // ========================================================
 
     const material =
         obterMaterialSelecionado();
@@ -506,9 +496,9 @@ function calcular() {
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // COMPRIMENTO INICIAL
-    // --------------------------------------------------------
+    // ========================================================
 
     const comprimentoInicial =
         parseFloat(
@@ -528,9 +518,9 @@ function calcular() {
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // TEMPERATURA INICIAL
-    // --------------------------------------------------------
+    // ========================================================
 
     const Ti =
         parseFloat(
@@ -547,9 +537,9 @@ function calcular() {
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // TEMPERATURA FINAL
-    // --------------------------------------------------------
+    // ========================================================
 
     const Tf =
         parseFloat(
@@ -566,9 +556,9 @@ function calcular() {
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // VERIFICAR INTERVALO
-    // --------------------------------------------------------
+    // ========================================================
 
     const verificacao =
         verificarTemperaturas(
@@ -602,14 +592,15 @@ function calcular() {
             Tf
         );
 
-    const deltaLEscolar =
+    // ΔL interno — usado apenas nos cálculos
+    const deltaComprimentoEscolar =
         comprimentoEscolar -
         comprimentoInicial;
 
     const valorDilatacaoRelativaEscolar =
-        deltaLEscolar /
+        deltaComprimentoEscolar /
         comprimentoInicial;
-    
+
     const valorDilatacaoPercentualEscolar =
         valorDilatacaoRelativaEscolar * 100;
 
@@ -626,14 +617,15 @@ function calcular() {
             Tf
         );
 
-    const deltaLPapadakis =
+    // ΔL interno — usado apenas nos cálculos
+    const deltaComprimentoPapadakis =
         comprimentoPapadakis -
         comprimentoInicial;
 
     const valorDilatacaoRelativaPapadakis =
-        deltaLPapadakis /
+        deltaComprimentoPapadakis /
         comprimentoInicial;
-    
+
     const valorDilatacaoPercentualPapadakis =
         valorDilatacaoRelativaPapadakis * 100;
 
@@ -642,19 +634,59 @@ function calcular() {
     // DIFERENÇA ENTRE OS MODELOS
     // ========================================================
 
+    // Diferença absoluta entre os comprimentos finais
     const diferenca =
-        comprimentoPapadakis -
-        comprimentoEscolar;
+        Math.abs(
+            comprimentoPapadakis -
+            comprimentoEscolar
+        );
 
-    const diferencaPercentual =
+
+    // Diferença percentual entre os comprimentos finais
+    //
+    // O modelo escolar é utilizado como referência.
+    const diferencaComprimentoPercentual =
         (
             diferenca /
-            comprimentoEscolar
+            Math.abs(comprimentoEscolar)
         ) * 100;
 
 
     // ========================================================
-    // ΔT
+    // COMPARAÇÃO DOS COEFICIENTES LINEARES
+    // ========================================================
+
+    // Coeficiente do modelo escolar:
+    // α(25 °C), constante.
+    const alphaEscolar =
+        alpha25;
+
+
+    // Coeficiente instantâneo de Papadakis
+    // na temperatura final escolhida pelo usuário.
+    const alphaPapadakisFinal =
+        calcularCoeficienteLinear(
+            material,
+            Tf
+        );
+
+
+    // Diferença percentual entre os coeficientes.
+    //
+    // O coeficiente do modelo escolar é utilizado
+    // como referência.
+    const diferencaCoeficientes =
+        (
+            Math.abs(
+                alphaPapadakisFinal -
+                alphaEscolar
+            ) /
+            Math.abs(alphaEscolar)
+        ) * 100;
+
+
+    // ========================================================
+    // VARIAÇÃO DE TEMPERATURA
     // ========================================================
 
     const deltaT =
@@ -673,9 +705,15 @@ function calcular() {
 
         <p>
             O comprimento inicial
-            <strong>${formatarNumero(comprimentoInicial, 6)} m</strong>
+            <strong>${formatarNumero(
+                comprimentoInicial,
+                6
+            )} m</strong>
             foi considerado na temperatura
-            <strong>${formatarNumero(Ti, 1)} °C</strong>.
+            <strong>${formatarNumero(
+                Ti,
+                1
+            )} °C</strong>.
         </p>
     `;
 
@@ -688,7 +726,10 @@ function calcular() {
         alpha25 * 1e6;
 
     alphaResultado.textContent =
-        `${formatarNumero(alphaMicro, 4)} × 10⁻⁶`;
+        `${formatarNumero(
+            alphaMicro,
+            4
+        )} × 10⁻⁶`;
 
 
     // ========================================================
@@ -696,31 +737,28 @@ function calcular() {
     // ========================================================
 
     deltaTResultado.textContent =
-        formatarNumero(deltaT, 2);
+        formatarNumero(
+            deltaT,
+            2
+        );
 
 
     // ========================================================
-    // MODELO ESCOLAR
+    // MODELO ESCOLAR — RESULTADOS
     // ========================================================
 
-    dilatacaoRelativaEscolar.textContent =
+    dilatacaoRelativaEscolarEl.textContent =
         formatarCientifico(
             valorDilatacaoRelativaEscolar
         );
-    
-    dilatacaoPercentualEscolar.textContent =
+
+    dilatacaoPercentualEscolarEl.textContent =
         `${formatarNumero(
             valorDilatacaoPercentualEscolar,
             6
         )} %`;
 
-    deltaLEscolar.textContent =
-        `${formatarNumero(
-            deltaLEscolar,
-            9
-        )} m`;
-
-    comprimentoFinalEscolar.textContent =
+    comprimentoFinalEscolarEl.textContent =
         `${formatarNumero(
             comprimentoEscolar,
             9
@@ -728,27 +766,21 @@ function calcular() {
 
 
     // ========================================================
-    // MODELO PAPADAKIS
+    // MODELO PAPADAKIS — RESULTADOS
     // ========================================================
 
-    dilatacaoRelativaPapadakis.textContent =
+    dilatacaoRelativaPapadakisEl.textContent =
         formatarCientifico(
             valorDilatacaoRelativaPapadakis
         );
-    
-    dilatacaoPercentualPapadakis.textContent =
+
+    dilatacaoPercentualPapadakisEl.textContent =
         `${formatarNumero(
             valorDilatacaoPercentualPapadakis,
             6
         )} %`;
 
-    deltaLPapadakis.textContent =
-        `${formatarNumero(
-            deltaLPapadakis,
-            9
-        )} m`;
-
-    comprimentoFinalPapadakis.textContent =
+    comprimentoFinalPapadakisEl.textContent =
         `${formatarNumero(
             comprimentoPapadakis,
             9
@@ -756,18 +788,33 @@ function calcular() {
 
 
     // ========================================================
-    // DIFERENÇA
+    // DIFERENÇAS — RESULTADOS
     // ========================================================
 
-    diferencaComprimento.textContent =
+    diferencaComprimentoEl.textContent =
         `${formatarNumero(
             diferenca,
             9
         )} m`;
 
-    diferencaPercentual.textContent =
+
+    diferencaComprimentoPercentualEl.textContent =
         `${formatarNumero(
-            diferencaPercentual,
+            diferencaComprimentoPercentual,
+            6
+        )} %`;
+
+
+    temperaturaFinalDiferencaEl.textContent =
+        `${formatarNumero(
+            Tf,
+            0
+        )} °C`;
+
+
+    diferencaCoeficientesEl.textContent =
+        `${formatarNumero(
+            diferencaCoeficientes,
             6
         )} %`;
 
@@ -843,8 +890,14 @@ function calcular() {
     );
 
     console.log(
-        "α25:",
-        alpha25,
+        "α escolar:",
+        alphaEscolar,
+        "K⁻¹"
+    );
+
+    console.log(
+        "α Papadakis em Tf:",
+        alphaPapadakisFinal,
         "K⁻¹"
     );
 
@@ -861,9 +914,21 @@ function calcular() {
     );
 
     console.log(
-        "Diferença:",
+        "Diferença de comprimento:",
         diferenca,
         "m"
+    );
+
+    console.log(
+        "Diferença percentual de comprimento:",
+        diferencaComprimentoPercentual,
+        "%"
+    );
+
+    console.log(
+        "Diferença percentual dos coeficientes:",
+        diferencaCoeficientes,
+        "%"
     );
 
     console.log(
@@ -1090,8 +1155,6 @@ temperaturaFinalInput.addEventListener(
 // ============================================================
 // GRÁFICO
 // ============================================================
-//
-// IMPORTANTE:
 //
 // O eixo X usa SEMPRE:
 //
@@ -1328,6 +1391,7 @@ function desenharGrafico(
         Math.min(
             ...todosComprimentos
         );
+
 
     const Lmax =
         Math.max(
