@@ -698,24 +698,11 @@ function calcular() {
     // ========================================================
 
     mensagem.innerHTML = `
-        <p>
-            Resultado da simulação para
-            <strong>${material.nome}</strong>.
-        </p>
-
-        <p>
-            O comprimento inicial
-            <strong>${formatarNumero(
-                comprimentoInicial,
-                6
-            )} m</strong>
-            foi considerado na temperatura
-            <strong>${formatarNumero(
-                Ti,
-                1
-            )} °C</strong>.
-        </p>
-    `;
+    <p>
+        Resultado da simulação para
+        <strong>${material.nome}</strong>.
+    </p>
+`;
 
 
     // ========================================================
@@ -1687,24 +1674,26 @@ function desenharGrafico(
     // ========================================================
     // MARCAR Ti
     // ========================================================
-
+    
     desenharMarcadorTemperatura(
         Ti,
         "Ti",
-        "#64748b"
+        "#64748b",
+        -6
     );
-
-
+    
+    
     // ========================================================
     // MARCAR Tf
     // ========================================================
-
+    
     if (Tf !== Ti) {
-
+    
         desenharMarcadorTemperatura(
             Tf,
             "Tf",
-            "#64748b"
+            "#64748b",
+            10
         );
     }
 
@@ -1716,7 +1705,8 @@ function desenharGrafico(
     function desenharMarcadorTemperatura(
         temperatura,
         rotulo,
-        estilo
+        estilo,
+        deslocamentoY = 0
     ) {
 
         if (
@@ -1780,7 +1770,7 @@ function desenharGrafico(
         ctx.fillText(
             `${rotulo} = ${temperatura} °C`,
             x,
-            margemSuperior - 6
+            margemSuperior + deslocamentoY
         );
 
 
@@ -1894,77 +1884,6 @@ function desenharGrafico(
 
 
     ctx.stroke();
-
-
-    // ========================================================
-    // PONTO Ti — MODELO ESCOLAR
-    // ========================================================
-
-    desenharPonto(
-        Ti,
-        calcularComprimentoEscolar(
-            material,
-            L0,
-            Ti,
-            Ti
-        ),
-        "#2563eb"
-    );
-
-
-    // ========================================================
-    // PONTO Ti — PAPADAKIS
-    // ========================================================
-
-    desenharPonto(
-        Ti,
-        calcularComprimentoPapadakis(
-            material,
-            L0,
-            Ti,
-            Ti
-        ),
-        "#16a34a"
-    );
-
-
-    function desenharPonto(
-        T,
-        L,
-        estilo
-    ) {
-
-        if (
-            T < eixoXMin ||
-            T > eixoXMax
-        ) {
-            return;
-        }
-
-
-        const x =
-            converterX(T);
-
-        const y =
-            converterY(L);
-
-
-        ctx.fillStyle =
-            estilo;
-
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            y,
-            4,
-            0,
-            2 * Math.PI
-        );
-
-        ctx.fill();
-    }
 
 
     // ========================================================
