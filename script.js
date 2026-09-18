@@ -50,6 +50,9 @@ const temperaturaInicialInput =
 const temperaturaFinalInput =
     document.getElementById("temperaturaFinal");
 
+const imagemMaterialEl =
+    document.getElementById("imagemMaterial");
+
 const calcularBtn =
     document.getElementById("calcular");
 
@@ -968,7 +971,21 @@ function atualizarInformacoesMaterial() {
         return;
     }
 
+    
+// --------------------------------------------------------
+// IMAGEM DO MATERIAL
+// --------------------------------------------------------
 
+if (material.imagem) {
+
+    imagemMaterialEl.src =
+        material.imagem;
+
+    imagemMaterialEl.alt =
+        `Imagem do ${material.nome}`;
+}
+
+    
     // --------------------------------------------------------
     // DADOS GERAIS
     // --------------------------------------------------------
